@@ -24,4 +24,5 @@ def latestTweet(username):
     postId = api.user_timeline(screen_name=f"{username}", count=1)[0].id
     return f"https://twitter.com/{username}/status/{postId}"
 
-print(latestTweet('elonmusk'))
+#testing method
+#print(latestTweet('elonmusk'))

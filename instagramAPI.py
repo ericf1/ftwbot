@@ -7,4 +7,4 @@ def latestIGPost(username):
     return f'https://www.instagram.com/p/{post_id}/'
 
 #testing method
-print(latestIGPost('adele'))
+#print(latestIGPost('adele'))
