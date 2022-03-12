@@ -16,13 +16,13 @@ def embeddedLink(link):
 #Loop to run continously check
 while(True):
     time.sleep(60)
-    if(oldTweetLink):
+    if(usernameTwitter):
         latestTweetLink = latestTweet(usernameTwitter)
         if(oldTweetLink != latestTweetLink):
             embeddedLink(latestTweetLink)
             oldTweetLink = latestTweetLink
 
-    if(oldIGLink):
+    if(usernameIG):
         latestIGLink = latestIGPost(usernameIG)
         if(oldIGLink != latestIGLink):
             embeddedLink(latestIGLink)
