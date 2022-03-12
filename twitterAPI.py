@@ -18,9 +18,10 @@ authenticate.set_access_token(TWITTER_ACCESS_KEY, TWITTER_ACCESS_SECRET_TOKEN)
 
 #API object to pass in auth info
 api = tweepy.API(authenticate, wait_on_rate_limit = True)
+
+#Function that returns the latest tweet from a given screenname
 def latestTweet(username):
-    posts = api.user_timeline(screen_name=f"{username}", count=1, tweet_mode="extended")
-    postId = posts[0].id
+    postId = api.user_timeline(screen_name=f"{username}", count=1)[0].id
     return f"https://twitter.com/{username}/status/{postId}"
 
 print(latestTweet('elonmusk'))
