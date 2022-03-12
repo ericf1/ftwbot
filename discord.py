@@ -3,14 +3,12 @@ from instagramAPI import latestIGPost
 
 import time
 
+#input instagram username and twitter username
 usernameIG = "thedivestudios"
 usernameTwitter = "thedivestudios"
 
 oldTweetLink = ""
 oldIGLink = ""
-
-onIG = True
-onTwitter = False
 
 def embeddedLink(link):
     print(link)
@@ -18,14 +16,15 @@ def embeddedLink(link):
 #Loop to run continously check
 while(True):
     time.sleep(60)
-    if(onIG):
+    if(oldTweetLink):
         latestTweetLink = latestTweet(usernameTwitter)
         if(oldTweetLink != latestTweetLink):
             embeddedLink(latestTweetLink)
-        oldTweetLink = latestTweetLink
+            oldTweetLink = latestTweetLink
 
-    if(onTwitter):
+    if(oldIGLink):
         latestIGLink = latestIGPost(usernameIG)
         if(oldIGLink != latestIGLink):
             embeddedLink(latestIGLink)
-        oldIGLink = latestIGLink
+            oldIGLink = latestIGLink
+        
