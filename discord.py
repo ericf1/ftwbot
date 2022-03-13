@@ -4,7 +4,7 @@ from instagramAPI import latestIGPost
 import time
 
 # input instagram username and twitter username
-usernameIG = "thedivestudios"
+usernameIG = "edisonfang123"
 usernameTwitter = ""
 
 oldTweetLink = ""
@@ -12,20 +12,20 @@ oldIGLink = ""
 
 
 def embeddedLink(link):
-    print(link)
+    print(link['link'])
 
 
 # Loop to run continously check
 while(True):
-    time.sleep(60)
     if(usernameTwitter):
         latestTweetLink = latestTweet(usernameTwitter)
-        if(oldTweetLink != latestTweetLink):
+        if(oldTweetLink != latestTweetLink["link"]):
             embeddedLink(latestTweetLink)
-            oldTweetLink = latestTweetLink
+            oldTweetLink = latestTweetLink["link"]
 
     if(usernameIG):
         latestIGLink = latestIGPost(usernameIG)
-        if(oldIGLink != latestIGLink):
+        if(oldIGLink != latestIGLink["link"]):
             embeddedLink(latestIGLink)
-            oldIGLink = latestIGLink
+            oldIGLink = latestIGLink["link"]
+    time.sleep(15)
