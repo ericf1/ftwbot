@@ -22,8 +22,20 @@ api = tweepy.API(authenticate, wait_on_rate_limit=True)
 # Function that returns the latest tweet from a given screenname
 
 def latestTweet(username):
-    postId = api.user_timeline(screen_name=f"{username}", count=1)[0].id
-    return f"https://twitter.com/{username}/status/{postId}"
+    latestTweetData = dict()
+    data = api.user_timeline(
+        screen_name=f"{username}", count=1, tweet_mode="extended")[0]
+    postId = data.id
+    latestTweetData["link"] = f"https://twitter.com/{username}/status/{postId}"
+    latestTweetData["timestamp"] = data.created_at
+    latestTweetData["text"] = data.full_text
+    latestTweetData["user"] = data.user.name
+
+    return latestTweetData
+
 
 # testing method
-# print(latestTweet('elonmusk'))
+# print(latestTweet('elonmusk')["link"])
+# print(latestTweet('elonmusk')["timestamp"])
+# print(latestTweet('elonmusk')["text"])
+# print(latestTweet('elonmusk')["user"])
