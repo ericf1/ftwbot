@@ -36,7 +36,7 @@ def latestTweet(username):
 
 
 # testing method
-# print(latestTweet('elonmusk')["link"])
-# print(latestTweet('elonmusk')["timestamp"])
-# print(latestTweet('elonmusk')["text"])
-# print(latestTweet('elonmusk')["user"])
+print(latestTweet('elonmusk')["link"])
+print(latestTweet('elonmusk')["timestamp"])
+print(latestTweet('elonmusk')["text"])
+print(latestTweet('elonmusk')["user"])
