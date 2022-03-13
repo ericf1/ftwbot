@@ -16,8 +16,8 @@ def latestIGPost(username):
 
 
 # testing method
-# print(latestIGPost("adele")["link"])
-# print(latestIGPost("adele")["photo"])
-# print(latestIGPost("adele")["description"])
-# print(latestIGPost("adele")["timestamp"])
-# print(latestIGPost("adele")["fullname"])
+print(latestIGPost("adele")["link"])
+print(latestIGPost("adele")["photo"])
+print(latestIGPost("adele")["description"])
+print(latestIGPost("adele")["timestamp"])
+print(latestIGPost("adele")["fullname"])

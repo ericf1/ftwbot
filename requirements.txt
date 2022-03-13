@@ -6,5 +6,3 @@ requests==2.27.1
 
 discord.py==1.7.3
 tweepy==4.6.0
-
-schedule==1.1.0

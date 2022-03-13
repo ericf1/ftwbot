@@ -1,11 +1,12 @@
-from instagramAPI import latestIGPost
-from twitterAPI import latestTweet
+""" from instagramAPI import latestIGPost
+from twitterAPI import latestTweet """
 import discord
 from discord.ext import commands
+
 import logging
 import time
+import threading
 import os
-import schedule
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -26,12 +27,27 @@ usernameTwitter = ""
 oldTweetLink = ""
 oldIGLink = ""
 
+
+class setInterval:
+    def __init__(self, interval, action):
+        self.interval = interval
+        self.action = action
+        self.stopEvent = threading.Event()
+        thread = threading.Thread(target=self.__setInterval)
+        thread.start()
+
+    def __setInterval(self):
+        nextTime = time.time()+self.interval
+        while not self.stopEvent.wait(nextTime-time.time()):
+            nextTime += self.interval
+            self.action()
+
+    def cancel(self):
+        self.stopEvent.set()
+
+
 # discord stuff
 client = discord.Client()
-
-
-def embeddedLink(link):
-    print(link['link'])
 
 
 @client.event
@@ -43,9 +59,10 @@ async def on_ready():
 
     await channel.send("Connected!")
 
-    while True:
+    async def sendRequest():
         await channel.send("5 secs passed")
-        time.sleep(5)
+
+    interval = setInterval(5, sendRequest)
 
 
 @client.event
@@ -80,6 +97,8 @@ async def pong(ctx):
 
 bot.run(os.getenv('DISCORD_TOKEN')) """
 
+""" def embeddedLink(link):
+    print(link['link']) """
 
 # Loop to run continously check
 """ while(True):
