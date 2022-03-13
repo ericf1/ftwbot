@@ -1,3 +1,5 @@
+from instagramAPI import latestIGPost
+from twitterAPI import latestTweet
 import discord
 from discord.ext import commands
 import logging
@@ -7,9 +9,6 @@ import schedule
 from dotenv import load_dotenv
 load_dotenv()
 
-
-""" from twitterAPI import latestTweet
-from instagramAPI import latestIGPost """
 
 # logging
 logger = logging.getLogger('discord')
@@ -21,7 +20,7 @@ handler.setFormatter(logging.Formatter(
 logger.addHandler(handler)
 
 # variables
-usernameIG = "thedivestudios"
+usernameIG = "edisonfang123"
 usernameTwitter = ""
 
 oldTweetLink = ""
@@ -29,6 +28,10 @@ oldIGLink = ""
 
 # discord stuff
 client = discord.Client()
+
+
+def embeddedLink(link):
+    print(link['link'])
 
 
 @client.event
@@ -80,15 +83,15 @@ bot.run(os.getenv('DISCORD_TOKEN')) """
 
 # Loop to run continously check
 """ while(True):
-    time.sleep(60)
     if(usernameTwitter):
         latestTweetLink = latestTweet(usernameTwitter)
-        if(oldTweetLink != latestTweetLink):
+        if(oldTweetLink != latestTweetLink["link"]):
             embeddedLink(latestTweetLink)
-            oldTweetLink = latestTweetLink
+            oldTweetLink = latestTweetLink["link"]
 
     if(usernameIG):
         latestIGLink = latestIGPost(usernameIG)
-        if(oldIGLink != latestIGLink):
+        if(oldIGLink != latestIGLink["link"]):
             embeddedLink(latestIGLink)
-            oldIGLink = latestIGLink """
+            oldIGLink = latestIGLink["link"]
+    time.sleep(15) """
