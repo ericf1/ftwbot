@@ -11,8 +11,9 @@ def latestIGPost(username):
     latestIGPostData["photo"] = data["display_url"]
     latestIGPostData["description"] = data["edge_media_to_caption"]["edges"][0]["node"]["text"]
     latestIGPostData["timestamp"] = data["taken_at_timestamp"]
+
     return latestIGPostData
 
 
 # testing method
-print(latestIGPost('adele')["photo"])
+print(latestIGPost("adele"))
