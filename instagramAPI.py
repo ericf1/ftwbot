@@ -2,9 +2,10 @@ import requests
 
 
 def latestIGPost(username):
+    latestIGPostData = dict()
     api_url = f"https://www.instagram.com/{username}/feed/?__a=1"
     data = requests.get(api_url).json()["graphql"]["user"]
-    latestIGPostData = dict()
+
     post_id = data["edge_owner_to_timeline_media"]["edges"][0]["node"]["shortcode"]
     latestIGPostData["link"] = f"https://www.instagram.com/p/{post_id}/"
     latestIGPostData["photo"] = data["edge_owner_to_timeline_media"]["edges"][0]["node"]["display_url"]
