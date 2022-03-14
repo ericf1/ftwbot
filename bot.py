@@ -8,13 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Input the account names you want
-usernameIG1 = "edisonfang123"
-usernameIG2 = "mindset_dive"
-
-usernameTwitter1 = "EricisonF"
-usernameTwitter2 = "mindset_dive"
-usernameTwitter3 = "briannam10"
-maxAccounts = 5
+instagram = ["edisonfang123","mindset_dive"]
+twitter = ["EricisonF","mindset_dive","briannam10"]
+maxAccounts = len(instagram) + len(twitter)
 
 # input the discord information
 serverName = "egg simps ᕕ( ᐛ )ᕗ"
@@ -63,17 +59,16 @@ async def latestPost(username, platform, i):
         previousPosts.truncate()
 
 
-@tasks.loop(seconds=5)  # repeat after every 10 seconds
+@tasks.loop(seconds=5)  # repeat after every 5 seconds
 async def myLoop():
     await client.wait_until_ready()
-    await latestPost(usernameIG1, "IGPost", 0)
-    await latestPost(usernameIG2, "IGPost", 1)
-    await latestPost(usernameTwitter1, "Tweet", 2)
-    await latestPost(usernameTwitter2, "Tweet", 3)
-    await latestPost(usernameTwitter3, "Tweet", 4)
+    await latestPost(instagram[0], "IGPost", 0)
+    await latestPost(instagram[1], "IGPost", 1)
+    await latestPost(twitter[0], "Tweet", 2)
+    await latestPost(twitter[1], "Tweet", 3)
+    await latestPost(twitter[2], "Tweet", 4)
 
 # .ping will respond pong to ensure that the bot is alive
-
 
 @client.command()
 async def ping(ctx):
