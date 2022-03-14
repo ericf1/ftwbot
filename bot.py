@@ -1,6 +1,5 @@
 from instagramAPI import latestIGPost
 from twitterAPI import latestTweet
-import discord
 from discord.ext import tasks, commands
 
 import logging
@@ -9,12 +8,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Input the account names you want
-usernameIG = "edisonfang123"
-usernameTwitter = "EricisonF"
+usernameIG1 = "edisonfang123"
+usernameIG2 = "mindset_dive"
+
+usernameTwitter1 = "EricisonF"
+usernameTwitter2 = "mindset_dive"
+usernameTwitter3 = "briannam10"
+maxAccounts = 5
 
 # input the discord information
 serverName = "egg simps ᕕ( ᐛ )ᕗ"
-channelID = 952684854917607458
+channelID = 579016789585821717
 
 # discord client commands
 client = commands.Bot(command_prefix='.')
@@ -34,34 +38,39 @@ async def on_ready():
 
 
 async def embeddedLink(data):
-    guild = discord.utils.get(client.guilds, name=serverName)
-    channel = guild.get_channel(channelID)
+    channel = client.get_channel(579016789585821717)
     await channel.send(data["link"])
 
+# abstraction for the latest post
+# @params:
+# username is username of user
+#platform is IG or Tweet
+# i is the counter for the file line
 
-@tasks.loop(seconds=10)  # repeat after every 10 seconds
+
+async def latestPost(username, platform, i):
+    latestData = eval(f"latest{platform}('{username}')")
+    latestDataLink = latestData["link"]
+
+    if(i != maxAccounts - 1):
+        latestDataLink = latestDataLink + '\n'
+
+    if(allPosts[i] != latestDataLink):
+        await embeddedLink(latestData)
+        allPosts[i] = latestDataLink
+        previousPosts.seek(0)
+        previousPosts.writelines(allPosts)
+        previousPosts.truncate()
+
+
+@tasks.loop(seconds=5)  # repeat after every 10 seconds
 async def myLoop():
-    # instagram part
-    latestIGPostData = latestIGPost(usernameIG)
-    latestIGPostDataLink = latestIGPostData["link"]
-
-    if(allPosts[0] != latestIGPostDataLink + '\n'):
-        await embeddedLink(latestIGPostData)
-        allPosts[0] = latestIGPostDataLink + '\n'
-        previousPosts.seek(0)
-        previousPosts.writelines(allPosts)
-        previousPosts.truncate()
-
-    # twitter part
-    latestTweetData = latestTweet(usernameTwitter)
-    latestTweetDataLink = latestTweetData["link"]
-
-    if(allPosts[1] != latestTweetDataLink):
-        await embeddedLink(latestTweetData)
-        allPosts[1] = latestTweetDataLink
-        previousPosts.seek(0)
-        previousPosts.writelines(allPosts)
-        previousPosts.truncate()
+    await client.wait_until_ready()
+    await latestPost(usernameIG1, "IGPost", 0)
+    await latestPost(usernameIG2, "IGPost", 1)
+    await latestPost(usernameTwitter1, "Tweet", 2)
+    await latestPost(usernameTwitter2, "Tweet", 3)
+    await latestPost(usernameTwitter3, "Tweet", 4)
 
 # .ping will respond pong to ensure that the bot is alive
 
