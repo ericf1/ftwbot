@@ -24,19 +24,25 @@ api = tweepy.API(authenticate, wait_on_rate_limit=True)
 
 def latestTweet(username):
     latestTweetData = dict()
-    data = api.user_timeline(
-        screen_name=f"{username}", count=1, tweet_mode="extended")[0]
-    postId = data.id
-    latestTweetData["link"] = f"https://twitter.com/{username}/status/{postId}"
-    latestTweetData["timestamp"] = data.created_at
-    latestTweetData["text"] = data.full_text
-    latestTweetData["user"] = data.user.name
+    try:
+        data = api.user_timeline(
+            screen_name=f"{username}", count=1, tweet_mode="extended")[0]
+        postId = data.id
+        latestTweetData["link"] = f"https://twitter.com/{username}/status/{postId}"
+        latestTweetData["timestamp"] = data.created_at
+        latestTweetData["text"] = data.full_text
+        latestTweetData["user"] = data.user.name
+    except:
+        latestTweetData["link"] = ""
+        latestTweetData["timestamp"] = None
+        latestTweetData["text"] = None
+        latestTweetData["user"] = None
 
     return latestTweetData
 
 
 # testing method
-print(latestTweet('elonmusk')["link"])
-print(latestTweet('elonmusk')["timestamp"])
-print(latestTweet('elonmusk')["text"])
-print(latestTweet('elonmusk')["user"])
+# print(latestTweet('elonmusk')["link"])
+# print(latestTweet('elonmusk')["timestamp"])
+# print(latestTweet('elonmusk')["text"])
+# print(latestTweet('elonmusk')["user"])
