@@ -1,43 +1,45 @@
 import requests
 
 
-def latestIGPost(username):
-    latestIGPostData = dict()
+def latestIGPost(username, prevFetchTime):
+    data = dict()
+    allData = []
     try:
         api_url = f"https://www.instagram.com/{username}/feed/?__a=1"
         userData = requests.get(api_url).json()["graphql"]["user"]
-        eRiC = userData["edge_owner_to_timeline_media"]["edges"][0]["node"]
+        postsData = userData["edge_owner_to_timeline_media"]["edges"]
 
-        post_id = eRiC["shortcode"]
-        latestIGPostData["link"] = f"https://www.instagram.com/p/{post_id}/"
-        latestIGPostData["photo"] = eRiC["display_url"]
-        # latestIGPostData["likes"] =
-        print(eRiC)
-        try:
-            latestIGPostData["description"] = userData["edge_owner_to_timeline_media"][
-                "edges"][0]["node"]["edge_media_to_caption"]["edges"][0]["node"]["text"]
-        except:
-            latestIGPostData["description"] = None
-        latestIGPostData["timestamp"] = eRiC["taken_at_timestamp"]
-        latestIGPostData["fullname"] = userData["full_name"]
+        data["profile_URL"] = f"https://www.instagram.com/{username}"
+        data["profile_pic_URL"] = userData.get("profile_pic_url")
+
+        i = 0
+        while True:
+            try:
+                data["post_timestamp"] = postsData[i]["node"].get(
+                    "taken_at_timestamp")
+                if data["post_timestamp"] < prevFetchTime:
+                    break
+
+                data["post_id"] = postsData[i]["node"].get("shortcode")
+                data["post_URL"] = f"https://www.instagram.com/p/{data['post_id']}/"
+                data["post_isVideo"] = postsData[i]["node"].get("is_video")
+
+                if not data["post_isVideo"]:
+                    data["post_picture"] = postsData[i]["node"].get(
+                        "display_url")
+
+                data["post_likes"] = postsData[i]["node"]["edge_liked_by"].get(
+                    "count")
+                data["post_description"] = postsData[i]["node"]["edge_media_to_caption"]["edges"][0]["node"].get(
+                    "text")
+
+                allData += data
+                loopIndex += 1
+            except:
+                data = None
     except:
-        latestIGPostData["link"] = ""
-        latestIGPostData["photo"] = None
-        latestIGPostData["description"] = None
-        latestIGPostData["timestamp"] = None
-        latestIGPostData["fullname"] = None
-    return latestIGPostData
-
-
-"""
-Profile Picture
-Username
-Post Description
-Likes
-First Image
-Timestamp
-
-"""
+        allData = None
+    return allData
 
 
 # testing method
@@ -46,4 +48,4 @@ Timestamp
 # print(latestIGPost("edisonfang123")["description"])
 # print(latestIGPost("edisonfang123")["timestamp"])
 # print(latestIGPost("edisonfang123")["fullname"])
-latestIGPost("edisonfang123")
+print(latestIGPost("adele"))
