@@ -5,18 +5,21 @@ def latestIGPost(username):
     latestIGPostData = dict()
     try:
         api_url = f"https://www.instagram.com/{username}/feed/?__a=1"
-        data = requests.get(api_url).json()["graphql"]["user"]
+        userData = requests.get(api_url).json()["graphql"]["user"]
+        eRiC = userData["edge_owner_to_timeline_media"]["edges"][0]["node"]
 
-        post_id = data["edge_owner_to_timeline_media"]["edges"][0]["node"]["shortcode"]
+        post_id = eRiC["shortcode"]
         latestIGPostData["link"] = f"https://www.instagram.com/p/{post_id}/"
-        latestIGPostData["photo"] = data["edge_owner_to_timeline_media"]["edges"][0]["node"]["display_url"]
+        latestIGPostData["photo"] = eRiC["display_url"]
+        # latestIGPostData["likes"] =
+        print(eRiC)
         try:
-            latestIGPostData["description"] = data["edge_owner_to_timeline_media"][
+            latestIGPostData["description"] = userData["edge_owner_to_timeline_media"][
                 "edges"][0]["node"]["edge_media_to_caption"]["edges"][0]["node"]["text"]
         except:
             latestIGPostData["description"] = None
-        latestIGPostData["timestamp"] = data["edge_owner_to_timeline_media"]["edges"][0]["node"]["taken_at_timestamp"]
-        latestIGPostData["fullname"] = data["full_name"]
+        latestIGPostData["timestamp"] = eRiC["taken_at_timestamp"]
+        latestIGPostData["fullname"] = userData["full_name"]
     except:
         latestIGPostData["link"] = ""
         latestIGPostData["photo"] = None
@@ -26,9 +29,21 @@ def latestIGPost(username):
     return latestIGPostData
 
 
+"""
+Profile Picture
+Username
+Post Description
+Likes
+First Image
+Timestamp
+
+"""
+
+
 # testing method
 # print(latestIGPost("edisonfang123")["link"])
 # print(latestIGPost("edisonfang123")["photo"])
 # print(latestIGPost("edisonfang123")["description"])
 # print(latestIGPost("edisonfang123")["timestamp"])
 # print(latestIGPost("edisonfang123")["fullname"])
+latestIGPost("edisonfang123")

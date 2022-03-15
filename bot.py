@@ -8,13 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Input the account names you want
-instagram = ["edisonfang123","mindset_dive"]
-twitter = ["EricisonF","mindset_dive","briannam10"]
+instagram = ["edisonfang123", "mindset_dive"]
+twitter = ["EricisonF", "mindset_dive", "briannam10"]
 maxAccounts = len(instagram) + len(twitter)
 
 # input the discord information
 serverName = "egg simps ᕕ( ᐛ )ᕗ"
-channelID = 579016789585821717
+channelID = 452286672441442355
 
 # discord client commands
 client = commands.Bot(command_prefix='.')
@@ -34,13 +34,14 @@ async def on_ready():
 
 
 async def embeddedLink(data):
-    channel = client.get_channel(579016789585821717)
-    await channel.send(data["link"])
+    channel = client.get_channel(channelID)
+    if data["link"]:
+        await channel.send(data["link"])
 
 # abstraction for the latest post
 # @params:
 # username is username of user
-#platform is IG or Tweet
+# platform is IGPost or Tweet
 # i is the counter for the file line
 
 
@@ -48,8 +49,11 @@ async def latestPost(username, platform, i):
     latestData = eval(f"latest{platform}('{username}')")
     latestDataLink = latestData["link"]
 
+    print(username, platform, i)
+    print(latestData, latestDataLink)
+
     if(i != maxAccounts - 1):
-        latestDataLink = latestDataLink + '\n'
+        latestDataLink += '\n'
 
     if(allPosts[i] != latestDataLink):
         await embeddedLink(latestData)
@@ -69,6 +73,7 @@ async def myLoop():
     await latestPost(twitter[2], "Tweet", 4)
 
 # .ping will respond pong to ensure that the bot is alive
+
 
 @client.command()
 async def ping(ctx):
