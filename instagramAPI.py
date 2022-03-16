@@ -20,34 +20,30 @@ def getLatestIGPosts(username, prevFetchTime):
                     "taken_at_timestamp") > prevFetchTime:
                 try:
                     data = dict()
-                    data["post_timestamp"] = postsData[i]["node"].get(
-                        "taken_at_timestamp")
 
-                    data["post_id"] = postsData[i]["node"].get(
-                        "shortcode")
+                    data["post_id"] = postsData[i]["node"]["shortcode"]
                     data["post_URL"] = f"https://www.instagram.com/p/{data['post_id']}/"
+                    data["post_timestamp"] = postsData[i]["node"]["taken_at_timestamp"]
 
-                    data["post_isVideo"] = postsData[i]["node"].get(
-                        "is_video")
+                    data["post_isVideo"] = postsData[i]["node"]["is_video"]
                     if data["post_isVideo"]:
-                        data["post_video_frame"] = postsData[i]["node"].get(
-                            "display_url")
-                        data["post_video_URL"] = postsData[i]["node"].get(
-                            "video_url")
+                        data["post_video_frame_URL"] = postsData[i]["node"]["display_url"]
+                        data["post_video_URL"] = postsData[i]["node"]["video_url"]
                     else:
-                        data["post_picture_URL"] = postsData[i]["node"].get(
-                            "display_url")
-                        data["post_likes"] = postsData[i]["node"]["edge_liked_by"].get(
-                            "count")
+                        data["post_picture_URL"] = postsData[i]["node"]["display_url"]
+
                     if postsData[i]["node"]["edge_media_to_caption"]["edges"]:
-                        data["post_description"] = postsData[i]["node"]["edge_media_to_caption"]["edges"][0]["node"].get(
+                        data["post_text"] = postsData[i]["node"]["edge_media_to_caption"]["edges"][0]["node"].get(
                             "text")
+
+                    data["post_likes"] = postsData[i]["node"]["edge_liked_by"].get(
+                        "count")
 
                     # print(i, data["post_timestamp"])
 
-                    allData.append({**profileData, **data})
+                    allData.append(
+                        {**profileData, **data, "username": username})
                     i += 1
-
                 except Exception as e:
                     print(repr(e), i, len(postsData))
 
