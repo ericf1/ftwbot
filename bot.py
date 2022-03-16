@@ -1,5 +1,5 @@
-from instagramAPI import latestIGPost
-from twitterAPI import latestTweet
+from instagramAPI import getLatestIGPosts
+from twitterAPI import getLatestTweets
 from discord.ext import tasks, commands
 
 import logging
@@ -66,11 +66,11 @@ async def latestPost(username, platform, i):
 @tasks.loop(seconds=5)  # repeat after every 5 seconds
 async def myLoop():
     await client.wait_until_ready()
-    await latestPost(instagram[0], "IGPost", 0)
-    await latestPost(instagram[1], "IGPost", 1)
-    await latestPost(twitter[0], "Tweet", 2)
-    await latestPost(twitter[1], "Tweet", 3)
-    await latestPost(twitter[2], "Tweet", 4)
+    await latestPost(instagram[0], "IGPosts", 0)
+    await latestPost(instagram[1], "IGPosts", 1)
+    await latestPost(twitter[0], "Tweets", 2)
+    await latestPost(twitter[1], "Tweets", 3)
+    await latestPost(twitter[2], "Tweets", 4)
 
 # .ping will respond pong to ensure that the bot is alive
 

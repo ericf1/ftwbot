@@ -21,24 +21,40 @@ api = tweepy.API(authenticate, wait_on_rate_limit=True)
 
 # Function that returns the latest tweet from a given screenname
 
+"""
+profile url
+profile picture url
+timestamp
+post url
+picture url / video url (optional)
+likes
+retweets
 
-def latestTweet(username):
-    latestTweetData = dict()
+if tweet = retweet:
+    continue
+"""
+
+
+def getLatestTweets(username):
+    profileData = dict()
+    allData = []
     try:
-        data = api.user_timeline(
-            screen_name=f"{username}", count=1, tweet_mode="extended")[0]
-        postId = data.id
-        latestTweetData["link"] = f"https://twitter.com/{username}/status/{postId}"
-        latestTweetData["timestamp"] = data.created_at
-        latestTweetData["text"] = data.full_text
-        latestTweetData["user"] = data.user.name
-    except:
-        latestTweetData["link"] = ""
-        latestTweetData["timestamp"] = None
-        latestTweetData["text"] = None
-        latestTweetData["user"] = None
+        tweetsData = api.user_timeline(screen_name=f"{username}", count=20, tweet_mode="extended")
 
-    return latestTweetData
+        data = dict()
+
+        data["post_id"] = tweetsData[0]["id"]
+        data["link"] = f"https://twitter.com/{username}/status/{postId}"
+        data["timestamp"] = data.created_at
+        data["text"] = tweetsData[0]["full_text"]
+        data["user"] = tweetsData[0]["user"]["name"]
+    except:
+        data["link"] = ""
+        data["timestamp"] = None
+        data["text"] = None
+        data["user"] = None
+
+    return data
 
 
 # testing method
