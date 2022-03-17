@@ -39,7 +39,8 @@ def getLatestIGPosts(username, prevFetchTime):
                     data["post_likes"] = postsData[i]["node"]["edge_liked_by"].get(
                         "count")
 
-                    # print(i, data["post_timestamp"])
+                    print(i)
+                    print(data["post_URL"])
 
                     allData.append(
                         {**profileData, **data, "username": username})
@@ -57,4 +58,4 @@ def getLatestIGPosts(username, prevFetchTime):
 
 
 # latestIGPosts("edisonfang123", 1647231250)
-# latestIGPosts("edisonfang123", 0)
+# getLatestIGPosts("edisonfang123", 0)

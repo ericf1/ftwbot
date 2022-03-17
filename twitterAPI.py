@@ -1,4 +1,6 @@
 # Load the dotenv library and then the dotenv file
+import time
+import datetime
 from re import T
 import tweepy
 import os
@@ -33,10 +35,9 @@ if tweet = retweet:
 """
 
 
-def getLatestTweets(username):
+def getLatestTweets(username, prevFetchTime):
     profileData = dict()
     allData = []
-    media = []
     try:
         tweetsData = api.user_timeline(
             user_id=f"{username}", count=20, tweet_mode="extended", exclude_replies=True, include_rts=False)
@@ -48,7 +49,9 @@ def getLatestTweets(username):
             profileData["profile_pic_URL"] = userData["profile_image_url_https"]
 
             i = 0
-            while i < len(tweetsData) and tweetsData[i].created_at:
+            while i < len(tweetsData) and time.mktime(tweetsData[i].created_at.timetuple()) > prevFetchTime:
+
+                print(i, time.mktime(tweetsData[i].created_at.timetuple()))
 
                 tweetData = tweetsData[i]._json
 
@@ -59,35 +62,26 @@ def getLatestTweets(username):
 
                 if tweetData.get("extended_entities") and tweetData["extended_entities"].get("media")[0]:
                     mediaData = tweetData["extended_entities"]["media"][0]
-                    media.append(mediaData)
 
-                    data["post_isVideo"] = True if mediaData.type == "video" else False
+                    data["post_isVideo"] = True if mediaData["type"] == "video" else False
                     if data["post_isVideo"]:
                         data["post_video_frame_URL"] = mediaData["media_url_https"]
-                        # data["post_video_URL"] = mediaData["video_url"]
-                    # else:
-                        # data["post_picture_URL"] = mediaData["display_url"]
-
-                    print(i)
-                    print(mediaData)
-                    zzzzzzzz = 1
+                        data["post_video_URL"] = mediaData["video_info"]["variants"][0]["url"]
+                    else:
+                        data["post_picture_URL"] = mediaData["media_url_https"]
 
                 data["post_text"] = tweetData["full_text"]
                 data["post_likes"] = tweetData["favorite_count"]
                 data["post_retweets"] = tweetData["retweet_count"]
 
-                # print(data["post_URL"])
+                # print(i)
+                print(data["post_URL"])
+
+                allData.append({**profileData, **data, "username": username})
                 i += 1
     except Exception as e:
         print(repr(e))
-        data = None
-    # return data
+        allData = None
+    return allData
 
-
-# testing method
-# print(latestTweet('elonmusk')["link"])
-# print(latestTweet('elonmusk')["timestamp"])
-# print(latestTweet('elonmusk')["text"])
-# print(latestTweet('elonmusk')["user"])
-
-getLatestTweets("EricisonF")
+# getLatestTweets("EricisonF", 0)
