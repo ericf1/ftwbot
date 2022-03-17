@@ -7,32 +7,11 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-
-TWITTER_API_KEY = os.getenv('TWITTER_API_KEY')
-TWITTER_API_SECRET_KEY = os.getenv('TWITTER_API_SECRET_KEY')
-TWITTER_ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN')
-TWITTER_ACCESS_TOKEN_SECRET = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
-
-auth = tweepy.OAuthHandler(TWITTER_API_KEY, TWITTER_API_SECRET_KEY,
-                           TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)
+auth = tweepy.OAuthHandler(os.getenv('TWITTER_API_KEY'), os.getenv('TWITTER_API_SECRET_KEY'),
+                           os.getenv('TWITTER_ACCESS_TOKEN'), os.getenv('TWITTER_ACCESS_TOKEN_SECRET'))
 
 # API object to pass in auth info
 api = tweepy.API(auth, wait_on_rate_limit=True)
-
-# Function that returns the latest tweet from a given screenname
-
-"""
-profile url
-profile picture url
-timestamp
-post url
-picture url / video url (optional)
-likes
-retweets
-
-if tweet = retweet:
-    continue
-"""
 
 
 def getLatestTweets(username, prevFetchTime):
@@ -84,4 +63,6 @@ def getLatestTweets(username, prevFetchTime):
         allData = None
     return allData
 
+
 # getLatestTweets("EricisonF", 0)
+getLatestTweets("elonmusk", 1647489600)
