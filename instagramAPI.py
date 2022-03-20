@@ -40,10 +40,11 @@ def getLatestIGPosts(username, prevFetchTime):
                         "count")
 
                     print(i)
-                    print(data["post_URL"])
+                    # print(data["post_URL"])
+                    print({**profileData, **data})
 
                     allData.append(
-                        {**profileData, **data, "username": username})
+                        {**profileData, **data})
                     i += 1
                 except Exception as e:
                     print(repr(e), i, len(postsData))
@@ -57,5 +58,5 @@ def getLatestIGPosts(username, prevFetchTime):
     return allData
 
 
-# latestIGPosts("edisonfang123", 1647231250)
+getLatestIGPosts("edisonfang123", 1647662400)
 # getLatestIGPosts("edisonfang123", 0)

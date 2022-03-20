@@ -44,10 +44,10 @@ def getLatestTweets(username, prevFetchTime):
 
                     data["post_isVideo"] = True if mediaData["type"] == "video" else False
                     if data["post_isVideo"]:
-                        data["post_video_frame_URL"] = mediaData["media_url_https"]
+                        data["post_video_frame_URL"] = mediaData["media_url"]
                         data["post_video_URL"] = mediaData["video_info"]["variants"][0]["url"]
                     else:
-                        data["post_picture_URL"] = mediaData["media_url_https"]
+                        data["post_picture_URL"] = mediaData["media_url"]
 
                 data["post_text"] = tweetData["full_text"]
                 data["post_likes"] = tweetData["favorite_count"]
@@ -56,7 +56,7 @@ def getLatestTweets(username, prevFetchTime):
                 # print(i)
                 # print(data["post_URL"], data["post_timestamp"])
 
-                allData.append({**profileData, **data, "username": username})
+                allData.append({**profileData, **data})
                 i += 1
     except Exception as e:
         print(repr(e))
@@ -65,4 +65,4 @@ def getLatestTweets(username, prevFetchTime):
 
 
 # getLatestTweets("EricisonF", 1647316800)
-getLatestTweets("elonmusk", 1647662400)
+# getLatestTweets("elonmusk", 1647662400)

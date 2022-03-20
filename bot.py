@@ -4,6 +4,7 @@ from twitterAPI import getLatestTweets
 from discord.ext import tasks, commands
 
 import logging
+import time
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,8 +16,8 @@ maxAccounts = len(instagram) + len(twitter)
 
 # Setup database
 db = TinyDB('database.json')
-
-db.insert({'time': "now"})
+if not db.get(doc_id=1):
+    db.insert({"twitter": [], "instagram": []})
 
 
 # input the discord information
@@ -26,65 +27,41 @@ channelID = 452286672441442355
 # discord client commands
 client = commands.Bot(command_prefix='.')
 
-# opens the file that holds the data of the previous posts
-previousPosts = open("posts.txt", "r+")
-allPosts = previousPosts.readlines()
-
-# to ensure that the bot is actually running
-
 
 @client.event
 async def on_ready():
+    # printing out message so it looks cool
     print(f'{client.user.name} has connected to Discord!')
 
-# printing out message so it looks cool
 
-
-async def embeddedLink(data):
+""" async def embeddedLink(data):
     channel = client.get_channel(channelID)
-    if data["link"]:
-        await channel.send(data["link"])
+    prevTime = db.get(doc_id=1)["prevTime"]
 
-# abstraction for the latest post
-# @params:
-# username is username of user
-# platform is IGPost or Tweet
-# i is the counter for the file line
+    if prevTime:
+        for username in db.get(doc_id=1)["twitter"]:
+            tweets = getLatestTweets(username, prevTime)
 
+        for username in db.get(doc_id=1)["instagram"]:
+            posts = getLatestIGPosts(username, prevTime)
 
-async def latestPost(username, platform, i):
-    latestData = eval(f"latest{platform}('{username}')")
-    latestDataLink = latestData["link"]
-
-    print(username, platform, i)
-    print(latestData, latestDataLink)
-
-    if(i != maxAccounts - 1):
-        latestDataLink += '\n'
-
-    if(allPosts[i] != latestDataLink):
-        await embeddedLink(latestData)
-        allPosts[i] = latestDataLink
-        previousPosts.seek(0)
-        previousPosts.writelines(allPosts)
-        previousPosts.truncate()
+    db.update({"prevTime": time.time()}, doc_ids=[1]) """
 
 
-@tasks.loop(seconds=5)  # repeat after every 5 seconds
+@ tasks.loop(seconds=5)  # repeat after every 5 seconds
 async def myLoop():
     await client.wait_until_ready()
-    await latestPost(instagram[0], "IGPosts", 0)
-    await latestPost(instagram[1], "IGPosts", 1)
-    await latestPost(twitter[0], "Tweets", 2)
-    await latestPost(twitter[1], "Tweets", 3)
-    await latestPost(twitter[2], "Tweets", 4)
+
 
 # .ping will respond pong to ensure that the bot is alive
-
-
-@client.command()
+@ client.command()
 async def ping(ctx):
     await ctx.send('Pong')
+
+
+@ client.command()
+async def test(ctx):
+    await ctx.send("Ping")
 
 # Wilson's logging thing
 logger = logging.getLogger('discord')

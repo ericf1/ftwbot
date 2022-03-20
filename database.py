@@ -1,5 +1,11 @@
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
+import time
 
 db = TinyDB('database.json')
 
-db.insert({'time': 124125552})
+if not db.get(doc_id=1):
+    db.insert({"prevTime": time.time(),
+              "twitter": [], "instagram": []})
+
+db.update({"twitter": [
+          "something"], "instagram": ["something"]}, doc_ids=[1])
