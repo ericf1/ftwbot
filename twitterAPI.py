@@ -19,7 +19,7 @@ def getLatestTweets(username, prevFetchTime):
     allData = []
     try:
         tweetsData = api.user_timeline(
-            user_id=f"{username}", count=20, tweet_mode="extended", exclude_replies=True, include_rts=False)
+            screen_name=f"{username}", count=20, tweet_mode="extended", exclude_replies=True, include_rts=False)
 
         if tweetsData[0]._json["user"]:
             userData = tweetsData[0]._json["user"]
@@ -54,7 +54,7 @@ def getLatestTweets(username, prevFetchTime):
                 data["post_retweets"] = tweetData["retweet_count"]
 
                 # print(i)
-                print(data["post_URL"])
+                # print(data["post_URL"], data["post_timestamp"])
 
                 allData.append({**profileData, **data, "username": username})
                 i += 1
@@ -64,5 +64,5 @@ def getLatestTweets(username, prevFetchTime):
     return allData
 
 
-# getLatestTweets("EricisonF", 0)
-getLatestTweets("elonmusk", 1647489600)
+# getLatestTweets("EricisonF", 1647316800)
+getLatestTweets("elonmusk", 1647662400)

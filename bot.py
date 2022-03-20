@@ -1,3 +1,4 @@
+from tinydb import TinyDB, Query
 from instagramAPI import getLatestIGPosts
 from twitterAPI import getLatestTweets
 from discord.ext import tasks, commands
@@ -11,6 +12,12 @@ load_dotenv()
 instagram = ["edisonfang123", "mindset_dive"]
 twitter = ["EricisonF", "mindset_dive", "briannam10"]
 maxAccounts = len(instagram) + len(twitter)
+
+# Setup database
+db = TinyDB('database.json')
+
+db.insert({'time': "now"})
+
 
 # input the discord information
 serverName = "egg simps ᕕ( ᐛ )ᕗ"
