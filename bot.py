@@ -1,19 +1,15 @@
 from tinydb import TinyDB
-from instagramAPI import getLatestIGPosts
-from twitterAPI import getLatestTweets
-from discord.ext import tasks, commands
+from instagramAPI import getLatestIGPosts, checkInstagramUser
+from twitterAPI import getLatestTweets, checkTwitterUser
+from discord.ext import commands
 import discord
 
 import logging
 import time
 import os
 from dotenv import load_dotenv
+import re
 load_dotenv()
-
-# Input the account names you want
-# instagram = ["edisonfang123", "mindset_dive"]
-# twitter = ["EricisonF", "mindset_dive", "briannam10"]
-# maxAccounts = len(instagram) + len(twitter)
 
 # Setup database
 db = TinyDB('database.json')
@@ -83,23 +79,72 @@ async def ping(ctx):
 
 @bot.command()
 async def add(ctx, *args):
-    if len(args) != 2:
+    # ensuring there is at least one argument/help command
+    if len(args) == 0:
         await ctx.send("You need to enter `s!add {social-media-site} {username}`")
         return
 
+    # checking the first argument (platform management)
     socialMedia = args[0].lower()
-
     if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        await ctx.send("Error: Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        return
+    if socialMedia == "twitter":
+        platform = "Twitter"
+    if socialMedia == "instagram":
+        platform = "Instagram"
+
+    # looks at new user
+    newUser = " ".join(args[1:])
+
+    if not globals()[f"check{platform}User"](newUser):
+        await ctx.send(f"Error: That {platform} user does not exist.")
         return
 
-    # to ensure there are no duplicates of user accounts
-    try:
-        doc()[socialMedia].index(args[1])
-        await ctx.send(f"Updates from `{args[1]}` already exist.")
-    except:
-        db.update({f"{args[0]}": [*doc()[socialMedia], args[1]]}, doc_ids=[1])
-        await ctx.send(f"Updates from `{args[1]}` on `{args[0]}` will be posted.")
+    # checks if user exists already
+    if newUser in doc()[socialMedia]:
+        await ctx.send(f"Error: Updates from `{newUser}` already exist.")
+        return
+
+    db.update({socialMedia: [*doc()[socialMedia], newUser]}, doc_ids=[1])
+    await ctx.send(f"Updates from `{newUser}` on `{platform}` will be posted.")
+
+
+@bot.command()
+async def delete(ctx, *args):
+    if len(args) == 0:
+        await ctx.send("You need to enter `s!add {social-media-site} {username}`")
+        return
+
+    # checking the first argument (platform management)
+    socialMedia = args[0].lower()
+    if socialMedia != "twitter" and socialMedia != "instagram":
+        await ctx.send("Error: Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        return
+    if socialMedia == "twitter":
+        platform = "Twitter"
+    if socialMedia == "instagram":
+        platform = "Instagram"
+
+    # looks to see if user even exists
+    newUser = " ".join(args[1:])
+
+    if not newUser in doc()[socialMedia]:
+        await ctx.send(f"Error: `{newUser}` isn't in the bot.")
+        return
+
+    DeleteUserindex = doc()[socialMedia].index(newUser)
+    updatedUsers = doc()[socialMedia]
+    updatedUsers.pop(DeleteUserindex)
+    db.update({socialMedia: [updatedUsers]}, doc_ids=[1])
+
+    await ctx.send(f"Posts from `{newUser}` on `{platform}` will no longer be posted.")
+
+
+@ bot.command()
+async def list(ctx):
+    await ctx.send('Your Instagram Accounts:' + re.sub("[\[\]']", '', str(doc()['instagram'])) +
+                   '\n' + 'Your Twitter Accounts:' + re.sub("[\[\]']", '', str(doc()['twitter'])))
 
 
 # Wilson's logging thing

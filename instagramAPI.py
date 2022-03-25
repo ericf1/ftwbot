@@ -52,5 +52,11 @@ def getLatestIGPosts(username, prevFetchTime):
     return allData
 
 
+def checkInstagramUser(username):
+    if(requests.get(f"https://www.instagram.com/{username}/feed/?__a=1")):
+        return True
+    return False
+
+
 # getLatestIGPosts("edisonfang123", 1647662400)
 # getLatestIGPosts("edisonfang123", 0)

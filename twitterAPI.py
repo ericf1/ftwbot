@@ -1,6 +1,5 @@
 # Load the dotenv library and then the dotenv file
 import time
-import datetime
 from re import T
 import tweepy
 import os
@@ -58,6 +57,14 @@ def getLatestTweets(username, prevFetchTime):
         print(repr(e))
         allData = None
     return allData
+
+
+def checkTwitterUser(username):
+    try:
+        api.get_user(screen_name=username)
+        return True
+    except:
+        return False
 
 
 # getLatestTweets("EricisonF", 1647316800)
