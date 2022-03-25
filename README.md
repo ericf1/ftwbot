@@ -17,6 +17,6 @@ DISCORD_TOKEN=?
 
 To choose an account to track, edit the 'bot.py' file and change the account names to whichever one you would like to follow.
 
-In order to constantly maintain the bot, we recommend using a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). In order to run the Python script. The program is set to run every minute.
+In order to constantly maintain the bot, we recommend running the Python script (python3 bot.py) through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). The program is set to check for new posts every minute.
 
 Follow the requirements.txt in order to install the different libraries to run the bot.
