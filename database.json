@@ -1,14 +1,17 @@
 {
     "_default": {
         "1": {
+            "prevTime": 0,
             "twitter": [
                 "EricisonF",
-                "mindset_dive"
+                "mindset_dive",
+                "briannam10",
+                "a"
             ],
             "instagram": [
                 "edisonfang123",
                 "mindset_dive",
-                "briannam10"
+                "a"
             ]
         }
     }
