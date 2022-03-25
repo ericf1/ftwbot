@@ -6,6 +6,12 @@ General Use
 ---
 [Link To Authenticate Bot Into Server](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
 
+Features
+---
+- Easy to run (See Setup Information below)
+- Constant uptime (See Setup Information below)
+- Supports both Instagram and Twitter
+
 Setup Information
 ---
 You need a personal Discord Token, Twitter API Key, and Twitter Access Token
