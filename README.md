@@ -21,5 +21,5 @@ In order to constantly maintain the bot, we recommend running the Python script 
 
 To install the different libraries run:
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
