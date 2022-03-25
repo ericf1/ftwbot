@@ -77,9 +77,11 @@ async def ping(ctx):
     await ctx.send('Pong')
 
 
-@bot.command()
-async def setchannel(ctx, *args):
-    channelID = args[0]
+# @bot.command()
+# async def setchannel(ctx, *args):
+#     channelID = args[0]
+#     channel = bot.get_channel(channelID)
+#     print(channel)
 
 
 @ bot.command()
