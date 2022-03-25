@@ -1,14 +1,20 @@
 # ftwbot
 A custom discord bot that continuously updates and posts Instagram and Twitter news from designated accounts.
 
-YOU NEED YOUR OWN PERSONAL TWITTER API KEY, ACCESS TOKEN, AND DISCORD TOKEN.
+YOU NEED YOUR OWN **PERSONAL TWITTER API KEY**, **ACCESS TOKEN**, AND **DISCORD TOKEN**.
 Create a .env file containing the following (replace the question marks):
 
 TWITTER_API_KEY=??????
+
 TWITTER_API_SECRET_KEY=????????
+
 TWITTER_ACCESS_TOKEN=??????
+
 TWITTER_ACCESS_TOKEN_SECRET=?????????
+
 DISCORD_TOKEN=???????
+
+
 
 You can find these keys from the [Twitter Developer Portal](https://developer.twitter.com/en/portal/petition/essential/basic-info) and [Discord Developer Portal](https://discord.com/developers/docs/intro)
 
