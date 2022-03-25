@@ -19,4 +19,7 @@ To choose an account to track, edit the 'bot.py' file and change the account nam
 
 In order to constantly maintain the bot, we recommend running the Python script (python3 bot.py) through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). The program is set to check for new posts every minute.
 
-Follow the requirements.txt in order to install the different libraries to run the bot.
+To install the different libraries run:
+```
+pip install -r requirements.txt
+```
