@@ -17,7 +17,6 @@ DISCORD_TOKEN=?
 
 To choose an account to track, edit the 'bot.py' file and change the account names to whichever one you would like to follow.
 
-In order to constantly maintain the bot, we recommend using a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/).
-We followed this [guide](https://towardsaws.com/building-hosting-a-discord-bot-on-aws-e157bd7faf78) in order to run our bot.
+In order to constantly maintain the bot, we recommend using a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). In order to run the Python script. The program is set to run every minute.
 
 Follow the requirements.txt in order to install the different libraries to run the bot.
