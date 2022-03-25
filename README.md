@@ -37,4 +37,15 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command.
 | ping | | Pong | ``s!ping`` |
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | delete | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!delete twitter Cloud9`` |
-| list | | Displays a list of all of the social media accounts being tracked | ``s!list``
+| list | | Displays a list of all of the social media accounts being tracked | ``s!list``|
+
+Future
+---
+This bot will continue to be worked on with ideas for potential features being added soon.
+Suggestions are appreciated and can be post to the Disccusions page.
+
+Ideas
+---
+Find where the discussions page is and link it in the README
+
+
