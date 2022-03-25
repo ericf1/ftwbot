@@ -15,6 +15,7 @@ load_dotenv()
 # Setup database
 db = TinyDB('database.json')
 def doc(): return db.get(doc_id=1)
+def updateDoc(obj): db.update(obj, doc_ids=[1])
 
 
 if not doc():
@@ -68,7 +69,8 @@ async def myLoop():
                     embed.set_image(url=p["post_media_URL"])
 
                 await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
-    db.update({"prevTime": time.time()}, doc_ids=[1])
+
+    updateDoc({"prevTime": time.time()})
 
 
 # ping will respond pong to ensure that the bot is alive
@@ -83,34 +85,32 @@ async def ping(ctx):
 #     channel = bot.get_channel(channelID)
 #     print(channel)
 
-
 @ bot.command()
 async def add(ctx, *args):
     # ensuring there is at least one argument/help command
-    if len(args) == 0:
+    if len(args) != 2:
         await ctx.send("You need to enter `s!add {social-media-site} {username}`")
         return
 
     # checking the first argument (platform management)
     socialMedia = args[0].lower()
     if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Error: Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
-    if socialMedia == "twitter":
-        platform = "Twitter"
-    if socialMedia == "instagram":
-        platform = "Instagram"
+
+    platform = socialMedia.capitalize()
 
     # looks at new user
     newUser = " ".join(args[1:])
 
+    # checks if user account doesn't exist
     if not globals()[f"check{platform}User"](newUser):
-        await ctx.send(f"Error: That {platform} user does not exist.")
+        await ctx.send(f"`{newUser}` does not exist on {platform}.")
         return
 
     # checks if user exists already
     if newUser in doc()[socialMedia]:
-        await ctx.send(f"Error: Updates from `{newUser}` already exist.")
+        await ctx.send(f"Updates from `{newUser}` already exist.")
         return
 
     db.update({socialMedia: [*doc()[socialMedia], newUser]}, doc_ids=[1])
@@ -118,31 +118,28 @@ async def add(ctx, *args):
 
 
 @ bot.command()
-async def delete(ctx, *args):
-    if len(args) == 0:
-        await ctx.send("You need to enter `s!add {social-media-site} {username}`")
+async def remove(ctx, *args):
+    if len(args) != 2:
+        await ctx.send("You need to enter `s!add {social-media-site} {username}`.")
         return
 
     # checking the first argument (platform management)
     socialMedia = args[0].lower()
     if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Error: Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
-    if socialMedia == "twitter":
-        platform = "Twitter"
-    if socialMedia == "instagram":
-        platform = "Instagram"
+
+    platform = socialMedia.capitalize()
 
     # looks to see if user even exists
     newUser = " ".join(args[1:])
-
     if not newUser in doc()[socialMedia]:
-        await ctx.send(f"Error: `{newUser}` isn't in the bot.")
+        await ctx.send(f"Updates from `{newUser}` don't exist.")
         return
 
-    DeleteUserindex = doc()[socialMedia].index(newUser)
+    deleteUserindex = doc()[socialMedia].index(newUser)
     updatedUsers = doc()[socialMedia]
-    updatedUsers.pop(DeleteUserindex)
+    updatedUsers.pop(deleteUserindex)
     db.update({socialMedia: [updatedUsers]}, doc_ids=[1])
 
     await ctx.send(f"Posts from `{newUser}` on `{platform}` will no longer be posted.")
@@ -152,6 +149,14 @@ async def delete(ctx, *args):
 async def list(ctx):
     await ctx.send('Your Instagram Accounts:' + re.sub("[\[\]']", '', str(doc()['instagram'])) +
                    '\n' + 'Your Twitter Accounts:' + re.sub("[\[\]']", '', str(doc()['twitter'])))
+
+    instagramEmbed = discord.Embed(
+        title="Instagram Accounts", description=str('\n'.join(doc()['instagram'])), color=13453419)
+    twitterEmbed = discord.Embed(
+        title="Twitter Accounts", description=str('\n'.join(doc()['twitter'])), color=44270)
+
+    await ctx.send(embed=instagramEmbed)
+    await ctx.send(embed=twitterEmbed)
 
 
 # Wilson's logging thing
