@@ -59,4 +59,4 @@ def checkInstagramUser(username):
 
 
 # getLatestIGPosts("edisonfang123", 1647662400)
-# getLatestIGPosts("edisonfang123", 0)
+# print(getLatestIGPosts("edisonfang123", 0)[0]["post_timestamp"])

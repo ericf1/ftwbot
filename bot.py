@@ -1,8 +1,9 @@
 from tinydb import TinyDB
 from instagramAPI import getLatestIGPosts, checkInstagramUser
 from twitterAPI import getLatestTweets, checkTwitterUser
-from discord.ext import commands
+from discord.ext import commands, tasks
 import discord
+import datetime
 
 import logging
 import time
@@ -32,7 +33,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-# @tasks.loop(minutes=1)  # repeat every ...
+@tasks.loop(minutes=1.0)  # repeat every ...
 async def myLoop():
     await bot.wait_until_ready()
 
@@ -44,7 +45,7 @@ async def myLoop():
         for user in doc()["instagram"]:
             for p in getLatestIGPosts(user, prevTime):
                 embed = discord.Embed(
-                    description=p["post_text"], color=13453419, timestamp=p["post_timestamp"])
+                    description=p["post_text"], color=13453419, timestamp=datetime.datetime.utcfromtimestamp(p["post_timestamp"]))
                 embed.set_author(
                     name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
                 embed.set_footer(
@@ -57,7 +58,7 @@ async def myLoop():
         for user in doc()["twitter"]:
             for p in getLatestTweets(user, prevTime):
                 embed = discord.Embed(
-                    description=p["post_text"], color=44270, timestamp=p["post_timestamp"])
+                    description=p["post_text"], color=44270, timestamp=datetime.datetime.utcfromtimestamp(p["post_timestamp"]))
                 embed.set_author(
                     name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
                 embed.set_footer(
@@ -67,7 +68,6 @@ async def myLoop():
                     embed.set_image(url=p["post_media_URL"])
 
                 await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
-
     db.update({"prevTime": time.time()}, doc_ids=[1])
 
 
@@ -78,6 +78,11 @@ async def ping(ctx):
 
 
 @bot.command()
+async def setchannel(ctx, *args):
+    channelID = args[0]
+
+
+@ bot.command()
 async def add(ctx, *args):
     # ensuring there is at least one argument/help command
     if len(args) == 0:
@@ -110,7 +115,7 @@ async def add(ctx, *args):
     await ctx.send(f"Updates from `{newUser}` on `{platform}` will be posted.")
 
 
-@bot.command()
+@ bot.command()
 async def delete(ctx, *args):
     if len(args) == 0:
         await ctx.send("You need to enter `s!add {social-media-site} {username}`")
@@ -156,5 +161,5 @@ handler.setFormatter(logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-# myLoop.start()
+myLoop.start()
 bot.run(os.getenv('DISCORD_TOKEN'))
