@@ -7,8 +7,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-auth = tweepy.OAuthHandler(os.getenv('TWITTER_API_KEY'), os.getenv('TWITTER_API_SECRET_KEY'),
-                           os.getenv('TWITTER_ACCESS_TOKEN'), os.getenv('TWITTER_ACCESS_TOKEN_SECRET'))
+auth = tweepy.OAuthHandler(os.getenv('TWITTER_API_KEY'), os.getenv('TWITTER_API_SECRET_KEY'), os.getenv(
+    'TWITTER_ACCESS_TOKEN'), os.getenv('TWITTER_ACCESS_TOKEN_SECRET'))
 
 # API object to pass in auth info
 api = tweepy.API(auth, wait_on_rate_limit=True)
@@ -30,8 +30,6 @@ def getLatestTweets(username, prevFetchTime):
             i = 0
             while i < len(tweetsData) and time.mktime(tweetsData[i].created_at.timetuple()) > prevFetchTime:
 
-                print(i, time.mktime(tweetsData[i].created_at.timetuple()))
-
                 tweetData = tweetsData[i]._json
 
                 data = dict()
@@ -43,15 +41,13 @@ def getLatestTweets(username, prevFetchTime):
                     mediaData = tweetData["extended_entities"]["media"][0]
 
                     data["post_isVideo"] = True if mediaData["type"] == "video" else False
-                    if data["post_isVideo"]:
-                        data["post_video_frame_URL"] = mediaData["media_url"]
-                        data["post_video_URL"] = mediaData["video_info"]["variants"][0]["url"]
-                    else:
-                        data["post_picture_URL"] = mediaData["media_url"]
+                    data["post_media_URL"] = mediaData["media_url"]
 
                 data["post_text"] = tweetData["full_text"]
-                data["post_likes"] = tweetData["favorite_count"]
-                data["post_retweets"] = tweetData["retweet_count"]
+
+                # data["post_text"] = tweetData["full_text"]
+                # data["post_likes"] = tweetData["favorite_count"]
+                # data["post_retweets"] = tweetData["retweet_count"]
 
                 # print(i)
                 # print(data["post_URL"], data["post_timestamp"])

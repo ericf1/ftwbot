@@ -1,4 +1,4 @@
-from turtle import title
+from turtle import goto, title
 from tinydb import TinyDB
 from instagramAPI import getLatestIGPosts
 from twitterAPI import getLatestTweets
@@ -12,80 +12,95 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Input the account names you want
-instagram = ["edisonfang123", "mindset_dive"]
-twitter = ["EricisonF", "mindset_dive", "briannam10"]
-maxAccounts = len(instagram) + len(twitter)
+# instagram = ["edisonfang123", "mindset_dive"]
+# twitter = ["EricisonF", "mindset_dive", "briannam10"]
+# maxAccounts = len(instagram) + len(twitter)
 
 # Setup database
 db = TinyDB('database.json')
-if not db.get(doc_id=1):
-    db.insert({"twitter": [], "instagram": []})
+def doc(): return db.get(doc_id=1)
 
-# discord client commands
-client = commands.Bot(command_prefix='.')
+
+if not doc():
+    db.insert({"instagram": [], "twitter": []})
+
+# discord bot commands
+bot = commands.Bot(command_prefix='s!')
 
 # Input the Discord Information
-serverName = "egg simps ᕕ( ᐛ )ᕗ"
 channelID = 452286672441442355
 
 
-@client.event
+@bot.event
 async def on_ready():
     # printing out message so it looks cool
-    print(f'{client.user.name} has connected to Discord!')
+    print(f'{bot.user.name} has connected to Discord!')
 
 
-@ tasks.loop(minutes=1)  # repeat every minute
+# @tasks.loop(minutes=1)  # repeat every ...
 async def myLoop():
-    await client.wait_until_ready()
+    await bot.wait_until_ready()
 
-    channel = client.get_channel(channelID)
-    await channel.send("1 min passed: attempting to fetch:")
+    channel = bot.get_channel(channelID)
 
-    doc = db.get(doc_id=1)
-    prevTime = doc.get("prevTime")
+    prevTime = doc().get("prevTime")
 
     if prevTime:
-        for user in doc["instagram"]:
+        for user in doc()["instagram"]:
             for p in getLatestIGPosts(user, prevTime):
                 embed = discord.Embed(
-                    description=p["post_text"], color=13453419)
+                    description=p["post_text"], color=13453419, timestamp=p["post_timestamp"])
                 embed.set_author(
                     name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                embed.set_image(url=p["post_picture_URL"])
-                embed.add_field(name="Likes", value=f"{p['post_likes']}")
                 embed.set_footer(
                     text="Instagram", icon_url="https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png")
 
-                await channel.send(content=f"**New Post from {user}!**\n\n{p['post_URL']}", embed=embed)
+                embed.set_image(url=p["post_media_URL"])
+
+                await channel.send(content=f"**New post from {user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
+
+        for user in doc()["twitter"]:
+            for p in getLatestTweets(user, prevTime):
+                embed = discord.Embed(
+                    description=p["post_text"], color=44270, timestamp=p["post_timestamp"])
+                embed.set_author(
+                    name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+                embed.set_footer(
+                    text="Twitter", icon_url="https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png")
+
+                if p.get("post_media_URL"):
+                    embed.set_image(url=p["post_media_URL"])
+
+                await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
 
     db.update({"prevTime": time.time()}, doc_ids=[1])
 
 
-# .ping will respond pong to ensure that the bot is alive
-@ client.command()
+# ping will respond pong to ensure that the bot is alive
+@bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
 
 
-@ client.command()
-async def test(ctx):
-    embed = discord.Embed(
-        description="too cool!",
-        url="https://www.instagram.com/p/CbVpJMappfe/",
-        color=13453419,
-    )
-    embed.set_author(name="edisonfang123",
-                     url="https://www.instagram.com/edisonfang123",
-                     icon_url="https://instagram.fjdh1-1.fna.fbcdn.net/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?efg=eyJybWQiOiJpZ19hbmRyb2lkX21vYmlsZV9uZXR3b3JrX3N0YWNrX3F1aWNfa2VlcF9hbGl2ZV81X3RvXzIwczoyMHMifQ&_nc_ht=instagram.fjdh1-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=XvygljXaX5wAX-vcmS_&edm=ABmJApABAAAA&ccb=7-4&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2-ccb7-4&oh=00_AT_c_9FanzZDT4WuFzgq6-0G2oTOfD7ZTyIiOwiACb4zNA&oe=623E770F&_nc_sid=6136e7")
-    embed.set_image(url="https://scontent-lga3-1.cdninstagram.com/v/t51.2885-15/276003015_1014255279526381_4404476007183939739_n.jpg?stp=dst-jpg_e35_s640x640_sh0.08&_nc_ht=scontent-lga3-1.cdninstagram.com&_nc_cat=101&_nc_ohc=KCTH6RFYPVUAX_U8xKA&edm=AAuNW_gBAAAA&ccb=7-4&oh=00_AT8BJD3x9OkZsExZHLLxzs8c7R7QQw5yP62Juujl3ry1Cw&oe=623E04EF&_nc_sid=498da5")
-    embed.add_field(name="Likes", value="1",)
-    embed.set_footer(
-        text="Instagram",
-        icon_url="https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png")
-    # embed.timestamp = date.today()
+@bot.command()
+async def add(ctx, *args):
+    if len(args) != 2:
+        await ctx.send("You need to enter `s!add {social-media-site} {username}`")
+        return
 
-    await ctx.send(content="**New Post from edisonfang123!**\n\nhttps://www.instagram.com/p/CbVpJMappfe/", embed=embed)
+    socialMedia = args[0].lower()
+
+    if socialMedia != "twitter" and socialMedia != "instagram":
+        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        return
+
+    # to ensure there are no duplicates of user accounts
+    try:
+        doc()[socialMedia].index(args[1])
+        await ctx.send(f"Updates from `{args[1]}` already exist.")
+    except:
+        db.update({f"{args[0]}": [*doc()[socialMedia], args[1]]}, doc_ids=[1])
+        await ctx.send(f"Updates from `{args[1]}` on `{args[0]}` will be posted.")
 
 
 # Wilson's logging thing
@@ -97,5 +112,5 @@ handler.setFormatter(logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-myLoop.start()
-client.run(os.getenv('DISCORD_TOKEN'))
+# myLoop.start()
+bot.run(os.getenv('DISCORD_TOKEN'))
