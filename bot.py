@@ -1,4 +1,3 @@
-from turtle import title
 from tinydb import TinyDB
 from instagramAPI import getLatestIGPosts
 from twitterAPI import getLatestTweets
