@@ -1,3 +1,4 @@
+from turtle import update
 from tinydb import TinyDB
 from instagramAPI import getLatestIGPosts, checkInstagramUser
 from twitterAPI import getLatestTweets, checkTwitterUser
@@ -12,9 +13,13 @@ from dotenv import load_dotenv
 import re
 load_dotenv()
 
+instagramIcon = "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png"
+twitterIcon = "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png"
+
 # Setup database
 db = TinyDB('database.json')
 def doc(): return db.get(doc_id=1)
+def updateDoc(obj): db.update(obj, doc_ids=[1])
 
 
 if not doc():
@@ -23,8 +28,10 @@ if not doc():
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
 
-# Input the Discord Information
-channelID = 452286672441442355
+
+async def isAdmin(ctx):
+    await ctx.send("You do not have permission to use this command.")
+    return ctx.author.permissions_in(ctx.channel).administrator
 
 
 @bot.event
@@ -37,7 +44,7 @@ async def on_ready():
 async def myLoop():
     await bot.wait_until_ready()
 
-    channel = bot.get_channel(channelID)
+    channel = bot.get_channel(doc()["channelID"])
 
     prevTime = doc().get("prevTime")
 
@@ -49,7 +56,7 @@ async def myLoop():
                 embed.set_author(
                     name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
                 embed.set_footer(
-                    text="Instagram", icon_url="https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png")
+                    text="Instagram", icon_url=instagramIcon)
 
                 embed.set_image(url=p["post_media_URL"])
 
@@ -62,13 +69,14 @@ async def myLoop():
                 embed.set_author(
                     name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
                 embed.set_footer(
-                    text="Twitter", icon_url="https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png")
+                    text="Twitter", icon_url=twitterIcon)
 
                 if p.get("post_media_URL"):
                     embed.set_image(url=p["post_media_URL"])
 
                 await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
-    db.update({"prevTime": time.time()}, doc_ids=[1])
+
+    updateDoc({"prevTime": time.time()})
 
 
 # ping will respond pong to ensure that the bot is alive
@@ -77,81 +85,103 @@ async def ping(ctx):
     await ctx.send('Pong')
 
 
-# @bot.command()
-# async def setchannel(ctx, *args):
-#     channelID = args[0]
-#     channel = bot.get_channel(channelID)
-#     print(channel)
+@bot.command()
+async def setChannel(ctx, id: int = None):
+    if not await isAdmin(ctx):
+        return
+
+    if id:
+        if ctx.guild.get_channel(id):
+            updateDoc({"channelID": id})
+        else:
+            await ctx.send(f"That channel doesn't exist in this server.")
+            return
+    else:
+        updateDoc({"channelID": ctx.channel.id})
+
+    await ctx.send(f"Updates will be posted in <#{doc()['channelID']}>.")
 
 
 @ bot.command()
 async def add(ctx, *args):
+    if not await isAdmin(ctx):
+        return
+
     # ensuring there is at least one argument/help command
-    if len(args) == 0:
+    if len(args) != 2:
         await ctx.send("You need to enter `s!add {social-media-site} {username}`")
         return
 
     # checking the first argument (platform management)
     socialMedia = args[0].lower()
     if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Error: Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
-    if socialMedia == "twitter":
-        platform = "Twitter"
-    if socialMedia == "instagram":
-        platform = "Instagram"
+
+    platform = socialMedia.capitalize()
 
     # looks at new user
     newUser = " ".join(args[1:])
 
+    # checks if user account doesn't exist
     if not globals()[f"check{platform}User"](newUser):
-        await ctx.send(f"Error: That {platform} user does not exist.")
+        await ctx.send(f"`{newUser}` does not exist on {platform}.")
         return
 
     # checks if user exists already
     if newUser in doc()[socialMedia]:
-        await ctx.send(f"Error: Updates from `{newUser}` already exist.")
+        await ctx.send(f"Updates from `{newUser}` already exist.")
         return
 
-    db.update({socialMedia: [*doc()[socialMedia], newUser]}, doc_ids=[1])
+    updateDoc({socialMedia: [*doc()[socialMedia], newUser]})
     await ctx.send(f"Updates from `{newUser}` on `{platform}` will be posted.")
 
 
 @ bot.command()
-async def delete(ctx, *args):
-    if len(args) == 0:
-        await ctx.send("You need to enter `s!add {social-media-site} {username}`")
+async def remove(ctx, *args):
+    if not await isAdmin(ctx):
+        return
+
+    if len(args) != 2:
+        await ctx.send("You need to enter `s!add {social-media-site} {username}`.")
         return
 
     # checking the first argument (platform management)
     socialMedia = args[0].lower()
     if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Error: Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
-    if socialMedia == "twitter":
-        platform = "Twitter"
-    if socialMedia == "instagram":
-        platform = "Instagram"
+
+    platform = socialMedia.capitalize()
 
     # looks to see if user even exists
     newUser = " ".join(args[1:])
-
     if not newUser in doc()[socialMedia]:
-        await ctx.send(f"Error: `{newUser}` isn't in the bot.")
+        await ctx.send(f"Updates from `{newUser}` don't exist.")
         return
 
-    DeleteUserindex = doc()[socialMedia].index(newUser)
-    updatedUsers = doc()[socialMedia]
-    updatedUsers.pop(DeleteUserindex)
-    db.update({socialMedia: [updatedUsers]}, doc_ids=[1])
+    deleteUserindex = doc()[socialMedia].index(newUser)
+    updatedUsers = doc()[socialMedia].pop(deleteUserindex)
+    updateDoc({socialMedia: [updatedUsers]})
 
     await ctx.send(f"Posts from `{newUser}` on `{platform}` will no longer be posted.")
 
 
 @ bot.command()
 async def list(ctx):
-    await ctx.send('Your Instagram Accounts:' + re.sub("[\[\]']", '', str(doc()['instagram'])) +
-                   '\n' + 'Your Twitter Accounts:' + re.sub("[\[\]']", '', str(doc()['twitter'])))
+    if not await isAdmin(ctx):
+        return
+
+    instagramEmbed = discord.Embed(
+        title="Instagram Accounts", description='\n'.join(doc()['instagram']), color=13453419)
+    instagramEmbed.set_footer(text="Instagram", icon_url=instagramIcon)
+
+    twitterEmbed = discord.Embed(
+        title="Twitter Accounts", description='\n'.join(doc()['twitter']), color=44270)
+    twitterEmbed.set_footer(text="Twitter", icon_url=twitterIcon)
+
+    await ctx.send(embed=instagramEmbed)
+    await ctx.send(embed=twitterEmbed)
 
 
 # Wilson's logging thing
