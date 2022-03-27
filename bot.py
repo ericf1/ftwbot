@@ -133,7 +133,7 @@ async def add(ctx, socialMedia: to_lower, user: str):
     platform = socialMedia.capitalize()
     # checks if user account doesn't exist
     if not globals()[f"check{platform}User"](user):
-        await ctx.send(f"`{user}` does not exist on {platform}.")
+        await ctx.send(f"`User {user}` does not exist on {platform}.")
         return
 
     # checks if user exists in database already
