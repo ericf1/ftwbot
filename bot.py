@@ -1,3 +1,4 @@
+from turtle import update
 from tinydb import TinyDB
 from instagramAPI import getLatestIGPosts, checkInstagramUser
 from twitterAPI import getLatestTweets, checkTwitterUser
@@ -56,6 +57,9 @@ async def on_ready():
 async def myLoop():
     await bot.wait_until_ready()
 
+    if not doc().get("channelID"):
+        return
+
     channel = bot.get_channel(doc()["channelID"])
 
     prevTime = doc().get("prevTime")
@@ -102,20 +106,18 @@ async def ping(ctx):
 
 
 @bot.command()
-async def setChannel(ctx, id: int = None):
+async def setChannel(ctx, channel: discord.TextChannel):
     if not await isAdmin(ctx):
         return
 
-    if id:
-        if ctx.guild.get_channel(id):
-            updateDoc({"channelID": id})
-        else:
-            await ctx.send(f"That channel doesn't exist in this server.")
-            return
-    else:
-        updateDoc({"channelID": ctx.channel.id})
+    updateDoc({"channelID": channel.id})
+    await ctx.message.add_reaction("✅")
 
-    await ctx.send(f"Updates will be posted in <#{doc()['channelID']}>.")
+
+@setChannel.error
+async def setChannel_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
 
 
 @bot.command()
@@ -140,7 +142,7 @@ async def add(ctx, socialMedia: to_lower, user: str):
         return
 
     updateDoc({socialMedia: [*doc()[socialMedia], user]})
-    await ctx.send(f"Updates from `{user}` on `{platform}` will be posted.")
+    await ctx.message.add_reaction("✅")
 
 
 @add.error
@@ -170,8 +172,7 @@ async def remove(ctx, socialMedia: to_lower, user: str):
     users.pop(users.index(user))
 
     updateDoc({socialMedia: users})
-
-    await ctx.send(f"Posts from `{user}` on `{platform}` will no longer be posted.")
+    await ctx.message.add_reaction("✅")
 
 
 @remove.error
