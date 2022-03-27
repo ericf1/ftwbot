@@ -1,6 +1,4 @@
 # Load the dotenv library and then the dotenv file
-import time
-from re import T
 import tweepy
 import os
 from dotenv import load_dotenv

@@ -1,17 +1,24 @@
-from turtle import update
 from tinydb import TinyDB
 from instagramAPI import getLatestIGPosts, checkInstagramUser
 from twitterAPI import getLatestTweets, checkTwitterUser
 from discord.ext import commands, tasks
 import discord
-import datetime
 
 import logging
 import time
 import os
 from dotenv import load_dotenv
-import re
 load_dotenv()
+
+instagram = {
+    "icon": "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png",
+    "color": 13453419
+}
+
+twitter = {
+    "icon": "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png",
+    "color": 44270
+}
 
 instagramIcon = "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png"
 twitterIcon = "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png"
@@ -36,6 +43,9 @@ async def isAdmin(ctx):
     return isAdmin
 
 
+def to_lower(arg): return arg.lower()
+
+
 @bot.event
 async def on_ready():
     # printing out message so it looks cool
@@ -56,11 +66,11 @@ async def myLoop():
             if posts:
                 for p in posts:
                     embed = discord.Embed(
-                        description=p["post_text"], color=13453419, timestamp=p["post_timestamp"])
+                        description=p["post_text"], color=instagram["color"], timestamp=p["post_timestamp"])
                     embed.set_author(
                         name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
                     embed.set_footer(
-                        text="Instagram", icon_url=instagramIcon)
+                        text="Instagram", icon_url=instagram["icon"])
 
                     embed.set_image(url=p["post_media_URL"])
 
@@ -71,11 +81,11 @@ async def myLoop():
             if tweets:
                 for p in tweets:
                     embed = discord.Embed(
-                        description=p["post_text"], color=44270, timestamp=p["post_timestamp"])
+                        description=p["post_text"], color=twitter["color"], timestamp=p["post_timestamp"])
                     embed.set_author(
                         name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
                     embed.set_footer(
-                        text="Twitter", icon_url=twitterIcon)
+                        text="Twitter", icon_url=twitter["icon"])
 
                     if p.get("post_media_URL"):
                         embed.set_image(url=p["post_media_URL"])
@@ -86,12 +96,12 @@ async def myLoop():
 
 
 # ping will respond pong to ensure that the bot is alive
-@ bot.command()
+@bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
 
 
-@ bot.command()
+@bot.command()
 async def setChannel(ctx, id: int = None):
     if not await isAdmin(ctx):
         return
@@ -108,25 +118,17 @@ async def setChannel(ctx, id: int = None):
     await ctx.send(f"Updates will be posted in <#{doc()['channelID']}>.")
 
 
-@ bot.command()
-async def add(ctx, *args):
+@bot.command()
+async def add(ctx, socialMedia: to_lower, user: str):
     if not await isAdmin(ctx):
         return
 
-    # ensuring there is at least one argument/help command
-    if len(args) != 2:
-        await ctx.send("You need to enter `s!add {social-media-site} {username}`")
-        return
-
     # checking the first argument (platform management)
-    socialMedia = args[0].lower()
     if socialMedia != "twitter" and socialMedia != "instagram":
         await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
 
     platform = socialMedia.capitalize()
-
-    user = args[1]
     # checks if user account doesn't exist
     if not globals()[f"check{platform}User"](user):
         await ctx.send(f"`{user}` does not exist on {platform}.")
@@ -141,17 +143,18 @@ async def add(ctx, *args):
     await ctx.send(f"Updates from `{user}` on `{platform}` will be posted.")
 
 
-@ bot.command()
-async def remove(ctx, *args):
+@add.error
+async def add_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!add {social-media-site} {username}`")
+
+
+@bot.command()
+async def remove(ctx, socialMedia: to_lower, user: str):
     if not await isAdmin(ctx):
         return
 
-    if len(args) != 2:
-        await ctx.send("You need to enter `s!remove {social-media-site} {username}`.")
-        return
-
     # checking the first argument (platform management)
-    socialMedia = args[0].lower()
     if socialMedia != "twitter" and socialMedia != "instagram":
         await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
@@ -159,7 +162,6 @@ async def remove(ctx, *args):
     platform = socialMedia.capitalize()
 
     # checks if user exists in database
-    user = args[1]
     if not user in doc()[socialMedia]:
         await ctx.send(f"Updates from `{user}` don't exist.")
         return
@@ -172,18 +174,24 @@ async def remove(ctx, *args):
     await ctx.send(f"Posts from `{user}` on `{platform}` will no longer be posted.")
 
 
-@ bot.command()
+@remove.error
+async def remove_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!remove {social-media-site} {username}`")
+
+
+@bot.command()
 async def list(ctx):
     if not await isAdmin(ctx):
         return
 
     instagramEmbed = discord.Embed(
-        title="Accounts", description='\n'.join(doc()['instagram']), color=13453419)
-    instagramEmbed.set_footer(text="Instagram", icon_url=instagramIcon)
+        title="Accounts", description='\n'.join(doc()['instagram']), color=instagram["color"])
+    instagramEmbed.set_footer(text="Instagram", icon_url=instagram["icon"])
 
     twitterEmbed = discord.Embed(
-        title="Accounts", description='\n'.join(doc()['twitter']), color=44270)
-    twitterEmbed.set_footer(text="Twitter", icon_url=twitterIcon)
+        title="Accounts", description='\n'.join(doc()['twitter']), color=twitter["color"])
+    twitterEmbed.set_footer(text="Twitter", icon_url=twitter["icon"])
 
     await ctx.send(embed=instagramEmbed)
     await ctx.send(embed=twitterEmbed)
