@@ -30,8 +30,10 @@ bot = commands.Bot(command_prefix='s!')
 
 
 async def isAdmin(ctx):
-    await ctx.send("You do not have permission to use this command.")
-    return ctx.author.permissions_in(ctx.channel).administrator
+    isAdmin = ctx.author.permissions_in(ctx.channel).administrator
+    if not isAdmin:
+        await ctx.send("You do not have permission to use this command.")
+    return isAdmin
 
 
 @bot.event
@@ -50,42 +52,46 @@ async def myLoop():
 
     if prevTime:
         for user in doc()["instagram"]:
-            for p in getLatestIGPosts(user, prevTime):
-                embed = discord.Embed(
-                    description=p["post_text"], color=13453419, timestamp=datetime.datetime.utcfromtimestamp(p["post_timestamp"]))
-                embed.set_author(
-                    name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                embed.set_footer(
-                    text="Instagram", icon_url=instagramIcon)
+            posts = getLatestIGPosts(user, prevTime)
+            if posts:
+                for p in posts:
+                    embed = discord.Embed(
+                        description=p["post_text"], color=13453419, timestamp=p["post_timestamp"])
+                    embed.set_author(
+                        name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+                    embed.set_footer(
+                        text="Instagram", icon_url=instagramIcon)
 
-                embed.set_image(url=p["post_media_URL"])
-
-                await channel.send(content=f"**New post from {user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
-
-        for user in doc()["twitter"]:
-            for p in getLatestTweets(user, prevTime):
-                embed = discord.Embed(
-                    description=p["post_text"], color=44270, timestamp=datetime.datetime.utcfromtimestamp(p["post_timestamp"]))
-                embed.set_author(
-                    name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                embed.set_footer(
-                    text="Twitter", icon_url=twitterIcon)
-
-                if p.get("post_media_URL"):
                     embed.set_image(url=p["post_media_URL"])
 
-                await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
+                    await channel.send(content=f"**New post from {user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
 
-    updateDoc({"prevTime": time.time()})
+        for user in doc()["twitter"]:
+            tweets = getLatestTweets(user, prevTime)
+            if tweets:
+                for p in tweets:
+                    embed = discord.Embed(
+                        description=p["post_text"], color=44270, timestamp=p["post_timestamp"])
+                    embed.set_author(
+                        name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+                    embed.set_footer(
+                        text="Twitter", icon_url=twitterIcon)
+
+                    if p.get("post_media_URL"):
+                        embed.set_image(url=p["post_media_URL"])
+
+                    await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+
+    updateDoc({"prevTime": int(time.time())})
 
 
 # ping will respond pong to ensure that the bot is alive
-@bot.command()
+@ bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
 
 
-@bot.command()
+@ bot.command()
 async def setChannel(ctx, id: int = None):
     if not await isAdmin(ctx):
         return
@@ -120,21 +126,19 @@ async def add(ctx, *args):
 
     platform = socialMedia.capitalize()
 
-    # looks at new user
-    newUser = " ".join(args[1:])
-
+    user = args[1]
     # checks if user account doesn't exist
-    if not globals()[f"check{platform}User"](newUser):
-        await ctx.send(f"`{newUser}` does not exist on {platform}.")
+    if not globals()[f"check{platform}User"](user):
+        await ctx.send(f"`{user}` does not exist on {platform}.")
         return
 
-    # checks if user exists already
-    if newUser in doc()[socialMedia]:
-        await ctx.send(f"Updates from `{newUser}` already exist.")
+    # checks if user exists in database already
+    if user in doc()[socialMedia]:
+        await ctx.send(f"Updates from `{user}` already exist.")
         return
 
-    updateDoc({socialMedia: [*doc()[socialMedia], newUser]})
-    await ctx.send(f"Updates from `{newUser}` on `{platform}` will be posted.")
+    updateDoc({socialMedia: [*doc()[socialMedia], user]})
+    await ctx.send(f"Updates from `{user}` on `{platform}` will be posted.")
 
 
 @ bot.command()
@@ -143,7 +147,7 @@ async def remove(ctx, *args):
         return
 
     if len(args) != 2:
-        await ctx.send("You need to enter `s!add {social-media-site} {username}`.")
+        await ctx.send("You need to enter `s!remove {social-media-site} {username}`.")
         return
 
     # checking the first argument (platform management)
@@ -154,17 +158,18 @@ async def remove(ctx, *args):
 
     platform = socialMedia.capitalize()
 
-    # looks to see if user even exists
-    newUser = " ".join(args[1:])
-    if not newUser in doc()[socialMedia]:
-        await ctx.send(f"Updates from `{newUser}` don't exist.")
+    # checks if user exists in database
+    user = args[1]
+    if not user in doc()[socialMedia]:
+        await ctx.send(f"Updates from `{user}` don't exist.")
         return
 
-    deleteUserindex = doc()[socialMedia].index(newUser)
-    updatedUsers = doc()[socialMedia].pop(deleteUserindex)
-    updateDoc({socialMedia: [updatedUsers]})
+    users = doc()[socialMedia]
+    users.pop(users.index(user))
 
-    await ctx.send(f"Posts from `{newUser}` on `{platform}` will no longer be posted.")
+    updateDoc({socialMedia: users})
+
+    await ctx.send(f"Posts from `{user}` on `{platform}` will no longer be posted.")
 
 
 @ bot.command()
@@ -173,11 +178,11 @@ async def list(ctx):
         return
 
     instagramEmbed = discord.Embed(
-        title="Instagram Accounts", description='\n'.join(doc()['instagram']), color=13453419)
+        title="Accounts", description='\n'.join(doc()['instagram']), color=13453419)
     instagramEmbed.set_footer(text="Instagram", icon_url=instagramIcon)
 
     twitterEmbed = discord.Embed(
-        title="Twitter Accounts", description='\n'.join(doc()['twitter']), color=44270)
+        title="Accounts", description='\n'.join(doc()['twitter']), color=44270)
     twitterEmbed.set_footer(text="Twitter", icon_url=twitterIcon)
 
     await ctx.send(embed=instagramEmbed)

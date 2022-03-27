@@ -27,8 +27,7 @@ def getLatestTweets(username, prevFetchTime):
             profileData["profile_pic_URL"] = userData["profile_image_url_https"]
 
             i = 0
-            while i < len(tweetsData) and time.mktime(tweetsData[i].created_at.timetuple()) > prevFetchTime:
-
+            while i < len(tweetsData) and tweetsData[i].created_at.timestamp() > prevFetchTime:
                 tweetData = tweetsData[i]._json
 
                 data = dict()
@@ -67,5 +66,5 @@ def checkTwitterUser(username):
         return False
 
 
-# getLatestTweets("EricisonF", 1647316800)
+getLatestTweets("EricisonF", 1647316800)
 # getLatestTweets("elonmusk", 1647662400)
