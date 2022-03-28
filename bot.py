@@ -59,10 +59,10 @@ bot = commands.Bot(command_prefix='s!')
 
 
 async def isAdmin(ctx):
-    """ isAdmin = ctx.author.permissions_in(ctx.channel).administrator
+    isAdmin = ctx.author.permissions_in(ctx.channel).administrator
     if not isAdmin:
         await ctx.send("You do not have permission to use this command.")
-    return isAdmin """
+    return isAdmin
 
     return True
 
