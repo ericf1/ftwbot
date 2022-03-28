@@ -124,4 +124,4 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 
-database.json
+/src/database.json

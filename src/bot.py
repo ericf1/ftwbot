@@ -1,14 +1,16 @@
+from webbrowser import get
+from dotenv import load_dotenv
+import os
 from turtle import update
 from tinydb import TinyDB
-from instagramAPI import getLatestIGPosts, checkInstagramUser
-from twitterAPI import getLatestTweets, checkTwitterUser
+from instagramAPI import getLatestInstagramPosts, checkInstagramUser
+from twitterAPI import getLatestTwitterPosts, checkTwitterUser
 from discord.ext import commands, tasks
 import discord
 
 import logging
 import time
-import os
-from dotenv import load_dotenv
+from datetime import datetime, timezone
 load_dotenv()
 
 socialsData = {
@@ -17,7 +19,7 @@ socialsData = {
         "color": 13453419
     },
     "twitter": {
-        "icon": "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png",
+        "icon": "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_`48.png",
         "color": 44270
     }
 }
@@ -30,12 +32,14 @@ def doc(server_id):
     table = db.table(str(server_id))
 
     if not table.get(doc_id=1):
-        socialMediaObject = {}
+        table.insert({"socials": {}}, doc_ids=[1])
 
-        for socialMedia in socialsData.keys():
+    for socialMedia in socialsData.keys():
+        if socialMedia not in table.get(doc_id=1)["socials"].keys():
+            socialMediaObject = table.get(doc_id=1)["socials"]
             socialMediaObject[socialMedia] = []
 
-        table.insert({"socials": socialMediaObject})
+            table.update({"socials": socialMediaObject})
 
     return table.get(doc_id=1)
 
@@ -44,12 +48,14 @@ def updateDoc(server_id, obj):
     table = db.table(str(server_id))
 
     if not table.get(doc_id=1):
-        socialMediaObject = {}
+        table.insert({"socials": {}}, doc_ids=[1])
 
-        for socialMedia in socialsData.keys():
+    for socialMedia in socialsData.keys():
+        if socialMedia not in table.get(doc_id=1)["socials"].keys():
+            socialMediaObject = table.get(doc_id=1)["socials"]
             socialMediaObject[socialMedia] = []
 
-        table.insert({"socials": socialMediaObject})
+            table.update({"socials": socialMediaObject})
 
     table.update(obj, doc_ids=[1])
 
@@ -64,7 +70,8 @@ async def isAdmin(ctx):
         await ctx.send("You do not have permission to use this command.")
     return isAdmin
 
-    return True
+
+async def addReaction(ctx): await ctx.message.add_reaction("✅")
 
 
 def to_lower(arg): return arg.lower()
@@ -79,56 +86,16 @@ async def on_ready():
 @tasks.loop(minutes=1.0)  # repeat every ...
 async def myLoop():
     await bot.wait_until_ready()
-
-    for serverID in db.tables():
-        if not doc(serverID).get("channelID"):
-            return
-
-        channel = bot.get_channel(doc(serverID)["channelID"])
-        prevTime = doc(serverID).get("prevTime")
-
-        if prevTime:
-            for user in doc(serverID)["socials"]["instagram"]:
-                posts = getLatestIGPosts(user, prevTime)
-                if posts:
-                    for p in posts:
-                        embed = discord.Embed(
-                            description=p["post_text"], color=socialsData["instagram"]["color"], timestamp=p["post_timestamp"])
-                        embed.set_author(
-                            name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                        embed.set_footer(
-                            text="Instagram", icon_url=socialsData["instagram"]["icon"])
-
-                        embed.set_image(url=p["post_media_URL"])
-
-                        await channel.send(content=f"**New post from {user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
-
-            for user in doc(serverID)["socials"]["twitter"]:
-                tweets = getLatestTweets(user, prevTime)
-                if tweets:
-                    for p in tweets:
-                        embed = discord.Embed(
-                            description=p["post_text"], color=socialsData["twitter"]["color"], timestamp=p["post_timestamp"])
-                        embed.set_author(
-                            name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                        embed.set_footer(
-                            text="Twitter", icon_url=socialsData["twitter"]["icon"])
-
-                        if p.get("post_media_URL"):
-                            embed.set_image(url=p["post_media_URL"])
-
-                        await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
-
-        updateDoc(serverID, {"prevTime": int(time.time())})
+    await update()
 
 
 # ping will respond pong to ensure that the bot is alive
-@bot.command()
+@ bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
 
 
-@bot.command()
+@ bot.command()
 async def setChannel(ctx, channel: discord.TextChannel = None):
     if not await isAdmin(ctx):
         return
@@ -137,16 +104,53 @@ async def setChannel(ctx, channel: discord.TextChannel = None):
         updateDoc(ctx.guild.id, {"channelID": channel.id})
     else:
         updateDoc(ctx.guild.id, {"channelID": ctx.channel.id})
-    await ctx.message.add_reaction("✅")
+
+    await addReaction(ctx)
 
 
-@setChannel.error
+@ setChannel.error
 async def setChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
 
 
 @bot.command()
+async def update(ctx=None):
+    for serverID in db.tables():
+
+        if not doc(serverID).get("channelID"):
+            return
+
+        channel = bot.get_channel(doc(serverID)["channelID"])
+        prevTime = doc(serverID).get("prevTime")
+
+        if prevTime:
+            for socialMedia in socialsData.keys():
+                platform = socialMedia.capitalize()
+                for user in doc(serverID)["socials"][socialMedia]:
+                    posts = globals()[f"getLatest{platform}Posts"](
+                        user, prevTime)
+                    if posts:
+                        for p in posts:
+                            embed = discord.Embed(
+                                description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
+                            embed.set_author(
+                                name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+                            embed.set_footer(
+                                text=platform, icon_url=socialsData[socialMedia]["icon"])
+
+                            if p.get("post_media_URL"):
+                                embed.set_image(url=p["post_media_URL"])
+
+                            await channel.send(content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+
+        updateDoc(serverID, {"prevTime": int(time.time())})
+
+    if ctx:
+        await addReaction(ctx)
+
+
+@ bot.command()
 async def add(ctx, socialMedia: to_lower, user: str):
     if not await isAdmin(ctx):
         return
@@ -171,16 +175,17 @@ async def add(ctx, socialMedia: to_lower, user: str):
     socialsObj[socialMedia] = [*socialsObj[socialMedia], user]
 
     updateDoc(ctx.guild.id, {"socials": socialsObj})
-    await ctx.message.add_reaction("✅")
+
+    await addReaction(ctx)
 
 
-@add.error
+@ add.error
 async def add_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!add {social-media-site} {username}`")
 
 
-@bot.command()
+@ bot.command()
 async def remove(ctx, socialMedia: to_lower, user: str):
     if not await isAdmin(ctx):
         return
@@ -202,32 +207,29 @@ async def remove(ctx, socialMedia: to_lower, user: str):
     socialsObj[socialMedia] = users
 
     updateDoc(ctx.guild.id, {"socials": socialsObj})
-    await ctx.message.add_reaction("✅")
+
+    await addReaction(ctx)
 
 
-@remove.error
+@ remove.error
 async def remove_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!remove {social-media-site} {username}`")
 
 
-@bot.command()
+@ bot.command()
 async def list(ctx):
     if not await isAdmin(ctx):
         return
 
-    instagramEmbed = discord.Embed(
-        title="Accounts", description='\n'.join(doc(ctx.guild.id)["socials"]['instagram']), color=socialsData["instagram"]["color"])
-    instagramEmbed.set_footer(
-        text="Instagram", icon_url=socialsData["instagram"]["icon"])
+    for socialMedia in socialsData:
+        embed = discord.Embed(title="Accounts", description='\n'.join(doc(ctx.guild.id)[
+                              "socials"][socialMedia]), color=socialsData[socialMedia]["color"])
+        embed.set_footer(text=socialMedia.capitalize(),
+                         icon_url=socialsData[socialMedia]["icon"])
+        await ctx.send(embed=embed)
 
-    twitterEmbed = discord.Embed(
-        title="Accounts", description='\n'.join(doc(ctx.guild.id)["socials"]['twitter']), color=socialsData["twitter"]["color"])
-    twitterEmbed.set_footer(
-        text="Twitter", icon_url=socialsData["twitter"]["icon"])
-
-    await ctx.send(embed=instagramEmbed)
-    await ctx.send(embed=twitterEmbed)
+    await addReaction(ctx)
 
 
 # Wilson's logging thing
