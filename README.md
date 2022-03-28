@@ -27,9 +27,10 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 
 Future
 ---
-Potential Ideas:
 - Implementing other platforms
 - Creating custom web links for Discord webhooks
+
+
 Suggestions are appreciated and can be post to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
 
 How To Set Up Your Own Bot
