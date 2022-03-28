@@ -1,4 +1,5 @@
 # FTWBot
+![pfp (2)](https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png)
 
 A custom discord bot that continuously updates and posts Instagram and Twitter news from designated accounts.
 
@@ -31,7 +32,7 @@ Future
 - Creating custom web links for Discord webhooks
 
 
-Suggestions are appreciated and can be post to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
+Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
 
 How To Set Up Your Own Bot
 ---
@@ -57,8 +58,8 @@ pip3 install -r requirements.txt
 
 Technologies Used
 ---
-Python, Discord Python API, Tweepy API, Amazon Web Server
+Python, Discord Python API, Tweepy API, TinyDB, Amazon Web Server
 
 Made By
 ---
-Eric Fang, Wilson Wuchen, Edison Tran
+Eric Fang, Wilson Wuchen, Edison Tran, Trinnity Ye (Picture)
