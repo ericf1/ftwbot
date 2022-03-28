@@ -11,37 +11,60 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-instagram = {
-    "icon": "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png",
-    "color": 13453419
+socialsData = {
+    "instagram": {
+        "icon": "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png",
+        "color": 13453419
+    },
+    "twitter": {
+        "icon": "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png",
+        "color": 44270
+    }
 }
-
-twitter = {
-    "icon": "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png",
-    "color": 44270
-}
-
-instagramIcon = "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png"
-twitterIcon = "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_48.png"
 
 # Setup database
 db = TinyDB('database.json')
-def doc(): return db.get(doc_id=1)
-def updateDoc(obj): db.update(obj, doc_ids=[1])
 
 
-if not doc():
-    db.insert({"instagram": [], "twitter": []})
+def doc(server_id):
+    table = db.table(str(server_id))
+
+    if not table.get(doc_id=1):
+        socialMediaObject = {}
+
+        for socialMedia in socialsData.keys():
+            socialMediaObject[socialMedia] = []
+
+        table.insert({"socials": socialMediaObject})
+
+    return table.get(doc_id=1)
+
+
+def updateDoc(server_id, obj):
+    table = db.table(str(server_id))
+
+    if not table.get(doc_id=1):
+        socialMediaObject = {}
+
+        for socialMedia in socialsData.keys():
+            socialMediaObject[socialMedia] = []
+
+        table.insert({"socials": socialMediaObject})
+
+    table.update(obj, doc_ids=[1])
+
 
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
 
 
 async def isAdmin(ctx):
-    isAdmin = ctx.author.permissions_in(ctx.channel).administrator
+    """ isAdmin = ctx.author.permissions_in(ctx.channel).administrator
     if not isAdmin:
         await ctx.send("You do not have permission to use this command.")
-    return isAdmin
+    return isAdmin """
+
+    return True
 
 
 def to_lower(arg): return arg.lower()
@@ -57,46 +80,46 @@ async def on_ready():
 async def myLoop():
     await bot.wait_until_ready()
 
-    if not doc().get("channelID"):
-        return
+    for serverID in db.tables():
+        if not doc(serverID).get("channelID"):
+            return
 
-    channel = bot.get_channel(doc()["channelID"])
+        channel = bot.get_channel(doc(serverID)["channelID"])
+        prevTime = doc(serverID).get("prevTime")
 
-    prevTime = doc().get("prevTime")
+        if prevTime:
+            for user in doc(serverID)["socials"]["instagram"]:
+                posts = getLatestIGPosts(user, prevTime)
+                if posts:
+                    for p in posts:
+                        embed = discord.Embed(
+                            description=p["post_text"], color=socialsData["instagram"]["color"], timestamp=p["post_timestamp"])
+                        embed.set_author(
+                            name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+                        embed.set_footer(
+                            text="Instagram", icon_url=socialsData["instagram"]["icon"])
 
-    if prevTime:
-        for user in doc()["instagram"]:
-            posts = getLatestIGPosts(user, prevTime)
-            if posts:
-                for p in posts:
-                    embed = discord.Embed(
-                        description=p["post_text"], color=instagram["color"], timestamp=p["post_timestamp"])
-                    embed.set_author(
-                        name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                    embed.set_footer(
-                        text="Instagram", icon_url=instagram["icon"])
-
-                    embed.set_image(url=p["post_media_URL"])
-
-                    await channel.send(content=f"**New post from {user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
-
-        for user in doc()["twitter"]:
-            tweets = getLatestTweets(user, prevTime)
-            if tweets:
-                for p in tweets:
-                    embed = discord.Embed(
-                        description=p["post_text"], color=twitter["color"], timestamp=p["post_timestamp"])
-                    embed.set_author(
-                        name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                    embed.set_footer(
-                        text="Twitter", icon_url=twitter["icon"])
-
-                    if p.get("post_media_URL"):
                         embed.set_image(url=p["post_media_URL"])
 
-                    await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+                        await channel.send(content=f"**New post from {user}**\n{p['post_URL']}\n{'Click to view video' if p['post_isVideo'] else ''}", embed=embed)
 
-    updateDoc({"prevTime": int(time.time())})
+            for user in doc(serverID)["socials"]["twitter"]:
+                tweets = getLatestTweets(user, prevTime)
+                if tweets:
+                    for p in tweets:
+                        embed = discord.Embed(
+                            description=p["post_text"], color=socialsData["twitter"]["color"], timestamp=p["post_timestamp"])
+                        embed.set_author(
+                            name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+                        embed.set_footer(
+                            text="Twitter", icon_url=socialsData["twitter"]["icon"])
+
+                        if p.get("post_media_URL"):
+                            embed.set_image(url=p["post_media_URL"])
+
+                        await channel.send(content=f"**New tweet from @{user}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+
+        updateDoc(serverID, {"prevTime": int(time.time())})
 
 
 # ping will respond pong to ensure that the bot is alive
@@ -106,17 +129,20 @@ async def ping(ctx):
 
 
 @bot.command()
-async def setChannel(ctx, channel: discord.TextChannel):
+async def setChannel(ctx, channel: discord.TextChannel = None):
     if not await isAdmin(ctx):
         return
 
-    updateDoc({"channelID": channel.id})
+    if channel:
+        updateDoc(ctx.guild.id, {"channelID": channel.id})
+    else:
+        updateDoc(ctx.guild.id, {"channelID": ctx.channel.id})
     await ctx.message.add_reaction("✅")
 
 
 @setChannel.error
 async def setChannel_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+    if isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
 
 
@@ -126,8 +152,8 @@ async def add(ctx, socialMedia: to_lower, user: str):
         return
 
     # checking the first argument (platform management)
-    if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+    if socialMedia not in socialsData.keys():
+        await ctx.send(f"Invalid social media site entered. Available social media platforms are {', '.join(socialsData.keys())}.")
         return
 
     platform = socialMedia.capitalize()
@@ -137,11 +163,14 @@ async def add(ctx, socialMedia: to_lower, user: str):
         return
 
     # checks if user exists in database already
-    if user in doc()[socialMedia]:
+    if user in doc(ctx.guild.id)["socials"][socialMedia]:
         await ctx.send(f"Updates from `{user}` already exist.")
         return
 
-    updateDoc({socialMedia: [*doc()[socialMedia], user]})
+    socialsObj = doc(ctx.guild.id)["socials"]
+    socialsObj[socialMedia] = [*socialsObj[socialMedia], user]
+
+    updateDoc(ctx.guild.id, {"socials": socialsObj})
     await ctx.message.add_reaction("✅")
 
 
@@ -161,17 +190,18 @@ async def remove(ctx, socialMedia: to_lower, user: str):
         await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
         return
 
-    platform = socialMedia.capitalize()
-
     # checks if user exists in database
-    if not user in doc()[socialMedia]:
-        await ctx.send(f"Updates from `{user}` don't exist.")
+    if not user in doc(ctx.guild.id)["socials"][socialMedia]:
+        await ctx.send(f"Updates from `{user}` on {socialMedia} don't exist.")
         return
 
-    users = doc()[socialMedia]
+    users = doc(ctx.guild.id)["socials"][socialMedia]
     users.pop(users.index(user))
 
-    updateDoc({socialMedia: users})
+    socialsObj = doc(ctx.guild.id)["socials"]
+    socialsObj[socialMedia] = users
+
+    updateDoc(ctx.guild.id, {"socials": socialsObj})
     await ctx.message.add_reaction("✅")
 
 
@@ -187,12 +217,14 @@ async def list(ctx):
         return
 
     instagramEmbed = discord.Embed(
-        title="Accounts", description='\n'.join(doc()['instagram']), color=instagram["color"])
-    instagramEmbed.set_footer(text="Instagram", icon_url=instagram["icon"])
+        title="Accounts", description='\n'.join(doc(ctx.guild.id)["socials"]['instagram']), color=socialsData["instagram"]["color"])
+    instagramEmbed.set_footer(
+        text="Instagram", icon_url=socialsData["instagram"]["icon"])
 
     twitterEmbed = discord.Embed(
-        title="Accounts", description='\n'.join(doc()['twitter']), color=twitter["color"])
-    twitterEmbed.set_footer(text="Twitter", icon_url=twitter["icon"])
+        title="Accounts", description='\n'.join(doc(ctx.guild.id)["socials"]['twitter']), color=socialsData["twitter"]["color"])
+    twitterEmbed.set_footer(
+        text="Twitter", icon_url=socialsData["twitter"]["icon"])
 
     await ctx.send(embed=instagramEmbed)
     await ctx.send(embed=twitterEmbed)
