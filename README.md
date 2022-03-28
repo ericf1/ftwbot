@@ -18,20 +18,19 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|---------|
-| ping | | Pong | ``s!ping`` |
+| setChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!setChannel #general``|
+| list | None | Displays a list of all of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | delete | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!delete twitter Cloud9``|
-| list | | Displays a list of all of the social media accounts being tracked | ``s!list``|
-| setChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!setChannel #general``|
+| ping | None | Pong | ``s!ping`` |
+
 
 Future
 ---
-This bot will continue to be worked on with ideas for potential features being added soon.
-Suggestions are appreciated and can be post to the Disccusions page.
-
-Ideas
----
-Find where the discussions page is and link it in the README
+Potential Ideas:
+- Implementing other platforms
+- Creating custom web links for Discord webhooks
+Suggestions are appreciated and can be post to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
 
 How To Set Up Your Own Bot
 ---
@@ -54,3 +53,11 @@ To install the different libraries run:
 ```
 pip3 install -r requirements.txt
 ```
+
+Technologies Used
+---
+Python, Discord Python API, Tweepy API, Amazon Web Server
+
+Made By
+---
+Eric Fang, Wilson Wuchen, Edison Tran
