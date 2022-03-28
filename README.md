@@ -1,6 +1,6 @@
 # FTWBot
 
-<img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" width=300rem height=300rem>
+<img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem>
 
 A custom discord bot that continuously updates and posts Instagram and Twitter news from designated accounts.
 
