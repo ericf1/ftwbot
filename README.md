@@ -36,14 +36,15 @@ pip3 install -r requirements.txt
 
 Commands
 ---
-FTWBot's prefix is ``s!``, add it to the start of any of this bot's command.
+FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All of the commands are case-sensitive.
 
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|--------|
 | ping | | Pong | ``s!ping`` |
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
-| delete | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!delete twitter Cloud9`` |
+| delete | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!delete twitter Cloud9``|
 | list | | Displays a list of all of the social media accounts being tracked | ``s!list``|
+| setChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!setChannel #general``|
 
 Future
 ---
