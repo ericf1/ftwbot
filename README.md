@@ -17,7 +17,7 @@ Commands
 FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All of the commands are case-sensitive.
 
 | Command | Arguments | Description | Example |
-|---------|-----------|-------------|----------------|
+|---------|-----------|-------------|---------|
 | ping | | Pong | ``s!ping`` |
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | delete | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!delete twitter Cloud9``|
