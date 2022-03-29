@@ -64,11 +64,11 @@ def updateDoc(server_id, obj):
 bot = commands.Bot(command_prefix='s!')
 
 
-async def isAdmin(ctx):
-    isAdmin = ctx.author.permissions_in(ctx.channel).administrator
-    if not isAdmin:
+async def hasPerms(ctx):
+    hasPerms = ctx.author.permissions_in(ctx.channel).manage_channels
+    if not hasPerms:
         await ctx.send("You do not have permission to use this command.")
-    return isAdmin
+    return hasPerms
 
 
 async def addReaction(ctx): await ctx.message.add_reaction("✅")
@@ -97,7 +97,7 @@ async def ping(ctx):
 
 @ bot.command()
 async def setChannel(ctx, channel: discord.TextChannel = None):
-    if not await isAdmin(ctx):
+    if not await hasPerms(ctx):
         return
 
     if channel:
@@ -152,7 +152,7 @@ async def update(ctx=None):
 
 @ bot.command()
 async def add(ctx, socialMedia: to_lower, user: str):
-    if not await isAdmin(ctx):
+    if not await hasPerms(ctx):
         return
 
     # checking the first argument (platform management)
@@ -187,7 +187,7 @@ async def add_error(ctx, error):
 
 @ bot.command()
 async def remove(ctx, socialMedia: to_lower, user: str):
-    if not await isAdmin(ctx):
+    if not await hasPerms(ctx):
         return
 
     # checking the first argument (platform management)
@@ -219,7 +219,7 @@ async def remove_error(ctx, error):
 
 @ bot.command()
 async def list(ctx):
-    if not await isAdmin(ctx):
+    if not await hasPerms(ctx):
         return
 
     for socialMedia in socialsData:
