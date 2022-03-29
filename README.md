@@ -4,8 +4,9 @@
 
 A custom discord bot that continuously updates and posts Instagram and Twitter news from designated accounts.
 
-General Use
+General Use Setup
 ---
+Click on the link and authenticate the bot into your server
 [Link To Authenticate Bot Into Server](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
 
 Features
