@@ -1,5 +1,3 @@
-# pip install -r requirements.txt
-
 python-dotenv==0.19.2
 autopep8==1.6.0
 requests==2.27.1
