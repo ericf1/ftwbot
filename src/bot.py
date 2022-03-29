@@ -32,7 +32,7 @@ def doc(server_id):
     table = db.table(str(server_id))
 
     if not table.get(doc_id=1):
-        table.insert({"socials": {}}, doc_ids=[1])
+        table.insert({"socials": {}})
 
     for socialMedia in socialsData.keys():
         if socialMedia not in table.get(doc_id=1)["socials"].keys():
@@ -48,7 +48,7 @@ def updateDoc(server_id, obj):
     table = db.table(str(server_id))
 
     if not table.get(doc_id=1):
-        table.insert({"socials": {}}, doc_ids=[1])
+        table.insert({"socials": {}})
 
     for socialMedia in socialsData.keys():
         if socialMedia not in table.get(doc_id=1)["socials"].keys():
