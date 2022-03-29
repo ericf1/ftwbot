@@ -7,7 +7,7 @@ A custom discord bot that continuously updates and posts Instagram and Twitter n
 General Use Setup
 ---
 Click on the link and authenticate the bot into your server
-[Link To Authenticate Bot Into Server](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
+[Link to Authenticate Bot Into Your Server](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
 
 Features
 ---
@@ -40,7 +40,7 @@ Suggestions are appreciated and can be posted to the [Discussions](https://githu
 How To Set Up Your Own Bot
 ---
 You need a personal Discord Token, Twitter API Key, and Twitter Access Token
->Create a .env file containing the following (replace the question marks):
+>Create a .env file containing the following:
 ```
 TWITTER_API_KEY=
 TWITTER_API_SECRET_KEY=
