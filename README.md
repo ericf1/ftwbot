@@ -6,8 +6,8 @@ A custom discord bot that continuously updates and posts Instagram and Twitter n
 
 General Use Setup
 ---
-Click on the link and authenticate the bot into your server
-[Link to Authenticate Bot Into Your Server](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
+Click on the link and authenticate the bot into your server:
+[Link](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
 
 Features
 ---
