@@ -24,8 +24,8 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 | setChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!setChannel #general``|
 | list | None | Displays a list of all of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
-| update | None | Debugging tool to fetch the latest posts/tweets from the last update time (or message from the bot) | ``s!update`` |
 | delete | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!delete twitter Cloud9``|
+| update | None | Debugging tool to fetch the latest posts/tweets from the last update time (or message from the bot) | ``s!update`` |
 | ping | None | Pong | ``s!ping`` |
 
 
