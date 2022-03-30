@@ -63,6 +63,6 @@ Technologies Used
 ---
 Python, Discord Python API, Tweepy API, TinyDB, Amazon Web Server
 
-Made By
+Developers
 ---
 Eric Fang, Wilson Wuchen, Edison Tran, Trinnity Ye (Picture)
