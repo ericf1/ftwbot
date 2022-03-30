@@ -19,7 +19,7 @@ socialsData = {
         "color": 13453419
     },
     "twitter": {
-        "icon": "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/images/Twitter_logo_blue_`48.png",
+        "icon": "https://abs.twimg.com/responsive-web/client-web/icon-ios.b1fc7275.png",
         "color": 44270
     }
 }
