@@ -63,6 +63,10 @@ Technologies Used
 ---
 Python, Discord Python API, Tweepy API, TinyDB, Amazon Web Server
 
+Made For
+---
+[The Dive Studios](https://www.divestudios.io/)
+
 Developers
 ---
-Eric Fang, Wilson Wuchen, Edison Tran, Trinnity Ye (Picture)
+Eric Fang, Wilson Wuchen, Edison Tran, Trinnity Ye (Picture), Ella Tang (Idea)
