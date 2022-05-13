@@ -26,7 +26,6 @@ socialsData = {
 
 # Setup database
 db = TinyDB('database.json')
-timeDB = TinyDB('time.json')
 
 
 def doc(server_id):
@@ -81,11 +80,10 @@ def to_lower(arg): return arg.lower()
 @bot.event
 async def on_ready():
     # printing out message so it looks cool
-    timeDB.insert({"time": int(time.time())})
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(seconds=10)  # repeat every ...
+@tasks.loop(minutes=1.0)  # repeat every ...
 async def myLoop():
     await bot.wait_until_ready()
     await update()
@@ -124,7 +122,8 @@ async def update(ctx=None):
             return
 
         channel = bot.get_channel(doc(serverID)["channelID"])
-        prevTime = timeDB.table("_default").get(doc_id=1)["time"]
+        prevTime = doc(serverID).get("prevTime")
+
         if prevTime:
             for socialMedia in socialsData.keys():
                 platform = socialMedia.capitalize()
@@ -145,7 +144,7 @@ async def update(ctx=None):
 
                             await channel.send(content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
 
-        timeDB.update({"time": int(time.time())}, doc_ids=[1])
+        updateDoc(serverID, {"prevTime": int(time.time())})
 
     if ctx:
         await addReaction(ctx)
