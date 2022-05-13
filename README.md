@@ -7,6 +7,7 @@ I have gotten a lot of dms about the bot not working and we are working hard on 
 Please be patient as we are currently working on scaling and verifying the bot. We never expected over 100 servers to be using the bot in their servers. Thank you so much for the downloads and we will keep you posted. The ETA of this being finished will be around Monday, May 16th. Again, thank you guys so much.
 
 Best,
+
 Eric Fang
 
 # FTWBot
