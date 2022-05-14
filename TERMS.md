@@ -10,11 +10,11 @@
 
 <h3><strong>License</strong></h3>
 
-<p>Please read Privacy Policy located at ftwbot/</p>
+<p>Please read MIT License located at /ftwbot/LICENSE.md</p>
 
 <h3><strong>Your Privacy</strong></h3>
 
-<p>Please read Privacy Policy</p>
+<p>Please read Privacy Policy located at /ftwbot/PRIVACY.md</p>
 
 <h3><strong>Reservation of Rights</strong></h3>
 
