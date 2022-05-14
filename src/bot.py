@@ -123,6 +123,7 @@ async def myLoop():
 @ bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
+    await addReaction(ctx)
 
 
 @ bot.command()
