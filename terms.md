@@ -1,4 +1,5 @@
 <h2><strong>Terms and Conditions</strong></h2>
+<h3>Last updated: December 15th, 2018</h3>
 
 <p>Welcome to FTWBot!</p>
 
