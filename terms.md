@@ -1,5 +1,4 @@
 <h2><strong>Terms and Conditions</strong></h2>
-<h3>Last updated: December 15th, 2018</h3>
 
 <p>Welcome to FTWBot!</p>
 
@@ -35,3 +34,5 @@
 <p>The limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty.</p>
 
 <p>As long as the application and the information and services on the application are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
+
+<p>Last updated: December 15th, 2018</p>
