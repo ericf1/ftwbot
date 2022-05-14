@@ -35,4 +35,4 @@
 
 <p>As long as the application and the information and services on the application are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
 
-<p>Last updated: December 15th, 2018</p>
+<p>Last updated: May 14th, 2022</p>
