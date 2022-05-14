@@ -60,6 +60,23 @@ def updateDoc(server_id, obj):
     table.update(obj, doc_ids=[1])
 
 
+async def formatter(user, prevTime, socialMedia, channel):
+    platform = socialMedia.capitalize()
+    posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
+    for p in posts:
+        embed = discord.Embed(
+            description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
+        embed.set_author(
+            name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+        embed.set_footer(
+            text=platform, icon_url=socialsData[socialMedia]["icon"])
+
+        if p.get("post_media_URL"):
+            embed.set_image(url=p["post_media_URL"])
+
+        await channel.send(
+            content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
 
@@ -83,10 +100,23 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(minutes=1.0)  # repeat every ...
+@tasks.loop(seconds=60.0)  # repeat every ...
 async def myLoop():
     await bot.wait_until_ready()
-    await update()
+    threadsFunctions = []
+    for serverID in db.tables():
+        if(doc(serverID).get("prevTime") == None):
+            updateDoc(serverID, {"prevTime": int(time.time())})
+        channel = bot.get_channel(doc(serverID)["channelID"])
+        prevTime = doc(serverID).get("prevTime")
+        socials = doc(serverID).get("socials")
+        for socialMedia in socialsData.keys():
+            for user in socials[socialMedia]:
+                params = [user, prevTime, socialMedia, channel]
+                threadsFunctions.append(params)
+        updateDoc(serverID, {"prevTime": int(time.time())})
+    for params in threadsFunctions:
+        await formatter(params[0], params[1], params[2], params[3])
 
 
 # ping will respond pong to ensure that the bot is alive
@@ -105,6 +135,9 @@ async def setChannel(ctx, channel: discord.TextChannel = None):
     else:
         updateDoc(ctx.guild.id, {"channelID": ctx.channel.id})
 
+    if(doc(ctx.guild.id).get("prevTime") == None):
+        updateDoc(ctx.guild.id, {"prevTime": int(time.time())})
+
     await addReaction(ctx)
 
 
@@ -112,42 +145,6 @@ async def setChannel(ctx, channel: discord.TextChannel = None):
 async def setChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
-
-
-@bot.command()
-async def update(ctx=None):
-    for serverID in db.tables():
-
-        if not doc(serverID).get("channelID"):
-            return
-
-        channel = bot.get_channel(doc(serverID)["channelID"])
-        prevTime = doc(serverID).get("prevTime")
-
-        if prevTime:
-            for socialMedia in socialsData.keys():
-                platform = socialMedia.capitalize()
-                for user in doc(serverID)["socials"][socialMedia]:
-                    posts = globals()[f"getLatest{platform}Posts"](
-                        user, prevTime)
-                    if posts:
-                        for p in posts:
-                            embed = discord.Embed(
-                                description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
-                            embed.set_author(
-                                name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
-                            embed.set_footer(
-                                text=platform, icon_url=socialsData[socialMedia]["icon"])
-
-                            if p.get("post_media_URL"):
-                                embed.set_image(url=p["post_media_URL"])
-
-                            await channel.send(content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
-
-        updateDoc(serverID, {"prevTime": int(time.time())})
-
-    if ctx:
-        await addReaction(ctx)
 
 
 @ bot.command()
@@ -224,7 +221,7 @@ async def list(ctx):
 
     for socialMedia in socialsData:
         embed = discord.Embed(title="Accounts", description='\n'.join(doc(ctx.guild.id)[
-                              "socials"][socialMedia]), color=socialsData[socialMedia]["color"])
+            "socials"][socialMedia]), color=socialsData[socialMedia]["color"])
         embed.set_footer(text=socialMedia.capitalize(),
                          icon_url=socialsData[socialMedia]["icon"])
         await ctx.send(embed=embed)
