@@ -10,11 +10,11 @@
 
 <h3><strong>License</strong></h3>
 
-<p>Please read MIT License located at /ftwbot/LICENSE.md</p>
+<p>Please read <a href="https://github.com/ericf1/ftwbot/blob/main/LICENSE.md">MIT License</a></p>
 
 <h3><strong>Your Privacy</strong></h3>
 
-<p>Please read Privacy Policy located at /ftwbot/PRIVACY.md</p>
+<p>Please read <a href="https://github.com/ericf1/ftwbot/blob/main/PRIVACY_POLICY.md">Privacy Policy</a></p>
 
 <h3><strong>Reservation of Rights</strong></h3>
 
