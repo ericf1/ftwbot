@@ -1,4 +1,5 @@
 import requests
+import time
 
 
 def getLatestInstagramPosts(username, prevFetchTime):
@@ -10,6 +11,7 @@ def getLatestInstagramPosts(username, prevFetchTime):
         imagePostsData = userData["edge_owner_to_timeline_media"]["edges"]
         videoPostsData = userData["edge_felix_video_timeline"]["edges"]
 
+        profileData["profile_name"] = username
         profileData["profile_URL"] = f"https://www.instagram.com/{username}"
         profileData["profile_pic_URL"] = userData.get("profile_pic_url")
 
@@ -48,3 +50,12 @@ def checkInstagramUser(username):
     if(requests.get(f"https://www.instagram.com/{username}/feed/?__a=1")):
         return True
     return False
+
+
+if __name__ == '__main__':
+    username = ''
+
+    start = time.perf_counter()
+    getLatestInstagramPosts(username, 1)
+    finish = time.perf_counter()
+    print(f'finished in {round(finish-start, 2)} seconds(s)')

@@ -6,3 +6,9 @@ tinydb==4.7.0
 
 discord.py==1.7.3
 tweepy==4.6.0
+
+google-api-core==2.7.3
+google-api-python-client==2.47.0
+google-auth==2.6.6
+google-auth-httplib2==0.1.0
+google-auth-oauthlib==0.5.1

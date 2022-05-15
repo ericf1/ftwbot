@@ -1,6 +1,7 @@
 # Load the dotenv library and then the dotenv file
 import tweepy
 import os
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -55,3 +56,12 @@ def checkTwitterUser(username):
         return True
     except:
         return False
+
+
+if __name__ == '__main__':
+    username = ''
+
+    start = time.perf_counter()
+    getLatestTwitterPosts(username, 1)
+    finish = time.perf_counter()
+    print(f'finished in {round(finish-start, 2)} seconds(s)')

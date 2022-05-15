@@ -60,10 +60,11 @@ def updateDoc(server_id, obj):
     table.update(obj, doc_ids=[1])
 
 
-async def formatter(user, prevTime, socialMedia, channel):
+async def formatter(userID, prevTime, socialMedia, channel):
     platform = socialMedia.capitalize()
-    posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
+    posts = globals()[f"getLatest{platform}Posts"](userID, prevTime)
     for p in posts:
+        user = p['profile_name']
         embed = discord.Embed(
             description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
         embed.set_author(
@@ -100,7 +101,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(seconds=60.0)  # repeat every ...
+@tasks.loop(seconds=120.0)  # repeat every ...
 async def myLoop():
     await bot.wait_until_ready()
     threadsFunctions = []
