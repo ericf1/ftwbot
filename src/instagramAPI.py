@@ -27,8 +27,13 @@ def getLatestInstagramPosts(username, prevFetchTime):
                     data["post_media_URL"] = postsData[i]["node"]["display_url"]
 
                     if postsData[i]["node"]["edge_media_to_caption"]["edges"]:
-                        data["post_text"] = postsData[i]["node"]["edge_media_to_caption"]["edges"][0]["node"].get(
+                        postText = postsData[i]["node"]["edge_media_to_caption"]["edges"][0]["node"].get(
                             "text")
+
+                        if postText:
+                            data["post_text"] = postText
+                        else:
+                            data["post_text"] = ""
 
                     allData.append({**profileData, **data})
                     i += 1

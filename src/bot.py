@@ -60,6 +60,31 @@ def updateDoc(server_id, obj):
     table.update(obj, doc_ids=[1])
 
 
+<< << << < Updated upstream
+== == == =
+
+
+async def formatter(user, prevTime, socialMedia, channel):
+    if not channel:
+        return
+
+    platform = socialMedia.capitalize()
+    posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
+    for p in posts:
+        embed = discord.Embed(
+            description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
+        embed.set_author(
+            name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
+        embed.set_footer(
+            text=platform, icon_url=socialsData[socialMedia]["icon"])
+
+        if p.get("post_media_URL"):
+            embed.set_image(url=p["post_media_URL"])
+
+        await channel.send(
+            content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+
+>>>>>> > Stashed changes
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
 
@@ -77,16 +102,37 @@ async def addReaction(ctx): await ctx.message.add_reaction("✅")
 def to_lower(arg): return arg.lower()
 
 
+def removeAt(arg):
+    if arg[0] == "@":
+        return arg[1:]
+    else:
+        return arg
+
+
 @bot.event
 async def on_ready():
     # printing out message so it looks cool
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(minutes=1.0)  # repeat every ...
+@tasks.loop(seconds=5)  # repeat every ...
 async def myLoop():
     await bot.wait_until_ready()
-    await update()
+    threadsFunctions = []
+    for serverID in db.tables():
+        if(doc(serverID).get("prevTime") == None):
+            updateDoc(serverID, {"prevTime": int(time.time())})
+        channel = bot.get_channel(doc(serverID)["channelID"])
+        prevTime = doc(serverID).get("prevTime")
+        socials = doc(serverID).get("socials")
+        for socialMedia in socialsData.keys():
+            for user in socials[socialMedia]:
+                params = [user, prevTime, socialMedia, channel]
+                print(params)
+                threadsFunctions.append(params)
+        updateDoc(serverID, {"prevTime": int(time.time())})
+    for params in threadsFunctions:
+        await formatter(params[0], params[1], params[2], params[3])
 
 
 # ping will respond pong to ensure that the bot is alive
@@ -151,7 +197,7 @@ async def update(ctx=None):
 
 
 @ bot.command()
-async def add(ctx, socialMedia: to_lower, user: str):
+async def add(ctx, socialMedia: to_lower, user: removeAt):
     if not await hasPerms(ctx):
         return
 
@@ -186,7 +232,7 @@ async def add_error(ctx, error):
 
 
 @ bot.command()
-async def remove(ctx, socialMedia: to_lower, user: str):
+async def remove(ctx, socialMedia: to_lower, user: removeAt):
     if not await hasPerms(ctx):
         return
 
