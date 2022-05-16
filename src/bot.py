@@ -60,10 +60,6 @@ def updateDoc(server_id, obj):
     table.update(obj, doc_ids=[1])
 
 
-<< << << < Updated upstream
-== == == =
-
-
 async def formatter(user, prevTime, socialMedia, channel):
     if not channel:
         return
@@ -84,7 +80,6 @@ async def formatter(user, prevTime, socialMedia, channel):
         await channel.send(
             content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
 
->>>>>> > Stashed changes
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
 
