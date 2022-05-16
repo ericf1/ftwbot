@@ -59,7 +59,9 @@ def updateDoc(server_id, obj):
 
     table.update(obj, doc_ids=[1])
 
-#formatter function that sends the correct social media post
+# formatter function that sends the correct social media post
+
+
 async def formatter(user, prevTime, socialMedia, channel):
     platform = socialMedia.capitalize()
     posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
@@ -107,7 +109,9 @@ async def mainLoop():
     for serverID in db.tables():
         if(doc(serverID).get("prevTime") == None):
             updateDoc(serverID, {"prevTime": int(time.time())})
-        channel = bot.get_channel(doc(serverID)["channelID"])
+        channel = bot.get_channel(doc(serverID).get("channelID"))
+        if(channel == None):
+            return
         prevTime = doc(serverID).get("prevTime")
         socials = doc(serverID).get("socials")
         for socialMedia in socialsData.keys():
@@ -240,4 +244,6 @@ handler.setFormatter(logging.Formatter(
 logger.addHandler(handler)
 
 mainLoop.start()
-bot.run(os.getenv('DISCORD_TOKEN'))
+
+if __name__ == '__main__':
+    bot.run(os.getenv('DISCORD_TOKEN'))
