@@ -59,7 +59,7 @@ def updateDoc(server_id, obj):
 
     table.update(obj, doc_ids=[1])
 
-
+#formatter function that sends the correct social media post
 async def formatter(user, prevTime, socialMedia, channel):
     platform = socialMedia.capitalize()
     posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
@@ -100,8 +100,8 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(seconds=60.0)  # repeat every ...
-async def myLoop():
+@tasks.loop(seconds=120.0)  # repeat every 120 seconds
+async def mainLoop():
     await bot.wait_until_ready()
     threadsFunctions = []
     for serverID in db.tables():
@@ -230,7 +230,7 @@ async def list(ctx):
     await addReaction(ctx)
 
 
-# Wilson's logging thing
+# Discord Logger
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(
@@ -239,5 +239,5 @@ handler.setFormatter(logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-myLoop.start()
+mainLoop.start()
 bot.run(os.getenv('DISCORD_TOKEN'))
