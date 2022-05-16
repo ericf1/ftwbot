@@ -16,7 +16,7 @@ def getLatestTwitterPosts(username, prevFetchTime):
     allData = []
     try:
         tweetsData = api.user_timeline(
-            screen_name=f"{username}", count=20, tweet_mode="extended", exclude_replies=True, include_rts=False)
+            screen_name=f"{username}", count=10, tweet_mode="extended", exclude_replies=True, include_rts=False)
 
         if tweetsData[0]._json["user"]:
             userData = tweetsData[0]._json["user"]
