@@ -31,13 +31,13 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
 | ping | None | Pong | ``s!ping`` |
 
-*Note that for posts to send you must have a channel set first with s!setChannel!
+*Note that for posts to send you must have a channel set first with s!setChannel
 
 Future
 ---
 - Implementing Reddit and YouTube APIs
 - Creating custom web links for Discord webhooks
-- Implemmenting Redis Database
+- Implementing Redis Database
 
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
