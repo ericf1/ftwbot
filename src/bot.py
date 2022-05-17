@@ -114,7 +114,7 @@ async def mainLoop():
             updateDoc(serverID, {"prevTime": int(time.time())})
         channel = bot.get_channel(doc(serverID).get("channelID"))
         if(channel == None):
-            return
+            continue
         prevTime = doc(serverID).get("prevTime")
         socials = doc(serverID).get("socials")
         for socialMedia in socialsData.keys():

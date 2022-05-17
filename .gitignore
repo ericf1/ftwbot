@@ -125,4 +125,3 @@ venv.bak/
 .dmypy.json
 
 database.json
-time.json
