@@ -116,7 +116,6 @@ async def mainLoop():
         if(channel == None):
             return
         prevTime = doc(serverID).get("prevTime")
-        prevTime = 1
         socials = doc(serverID).get("socials")
         for socialMedia in socialsData.keys():
             for user in socials[socialMedia]:
