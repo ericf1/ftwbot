@@ -69,7 +69,9 @@ pip3 install -r requirements.txt
 python3 bot.py
 ```
 
-In order to constantly maintain the bot, we recommend running the Python script through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). We currently run an instance of ubuntu through AWS. Our Python code is currently set to check for new posts every two minutes (this can be changed in under the parameter of the mainLoop).
+Our Python code is currently set to check for new posts every two minutes (this can be changed in under the parameter of the mainLoop).
+
+In order to constantly maintain the bot, we recommend running the Python script through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). We currently run an instance of ubuntu through AWS. 
 
 Technologies Used
 ---
