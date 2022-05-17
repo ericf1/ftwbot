@@ -4,7 +4,7 @@
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts.
 
-[Top.gg](https://top.gg/bot/952690377104719964)
+Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
 Add The Bot To Your Own Server!
 ---
