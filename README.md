@@ -4,7 +4,7 @@
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 100 servers and are in the process of getting verified as a Discord bot!
+We are currently supporting over 100 servers and are in the process of getting verified as an official Discord bot!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
