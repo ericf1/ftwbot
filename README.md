@@ -2,7 +2,9 @@
 
 <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem>
 
-A custom discord bot that continuously updates and posts Instagram and Twitter news from designated accounts.
+A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts.
+
+[Top.gg](https://top.gg/bot/952690377104719964)
 
 General Use Setup
 ---
@@ -30,8 +32,9 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 
 Future
 ---
-- Implementing other platforms
+- Implementing Reddit and YouTube APIs
 - Creating custom web links for Discord webhooks
+- Implemmenting Redis Database
 
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
