@@ -75,9 +75,12 @@ async def formatter(user, prevTime, socialMedia, channel):
 
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
-
-        await channel.send(
-            content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+        print(channel.permissions_for())
+        try:
+            await channel.send(
+                content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+        except Exception as e:
+            print(repr(e))
 
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
@@ -113,6 +116,7 @@ async def mainLoop():
         if(channel == None):
             return
         prevTime = doc(serverID).get("prevTime")
+        prevTime = 1
         socials = doc(serverID).get("socials")
         for socialMedia in socialsData.keys():
             for user in socials[socialMedia]:
@@ -232,16 +236,6 @@ async def list(ctx):
         await ctx.send(embed=embed)
 
     await addReaction(ctx)
-
-
-# Discord Logger
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(
-    filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter(
-    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
 
 mainLoop.start()
 
