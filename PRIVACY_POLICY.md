@@ -250,4 +250,3 @@ If you have questions or comments about this notice, you may email us at ericfan
 
 Based on the applicable laws of your country, you may have the right to request access to the personal information we collect from you, change that information, or delete it in some circumstances. To request to review, update, or delete your personal information, please submit a request form by clicking here.
 
-Last Updated: May 17th 2022
