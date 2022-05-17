@@ -2,13 +2,15 @@
 
 <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem>
 
-A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts.
+A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
+
+We are currently supporting over 100 servers and are in the process of getting verified as a Discord bot!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
-Add The Bot To Your Own Server!
+Add FTWBot To Your Server!
 ---
-Click on the link and authenticate the bot into your server:
+Click on the link and authenticate:
 [Link](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
 
 Features
@@ -40,7 +42,7 @@ Future
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
 
-How To Set Up Your Own Bot
+How To Set Up Your Own Bot From Your Personal Machine
 ---
 >First, fetch our code base through git clone:
 ```
