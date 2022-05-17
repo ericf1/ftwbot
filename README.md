@@ -32,6 +32,7 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 | ping | None | Pong | ``s!ping`` |
 
 *Note that for posts to send you must have a channel set first with s!setChannel
+**You also must ensure that the bot has permission to write in that channel or it will not be able to post!
 
 Future
 ---
