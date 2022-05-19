@@ -1,12 +1,18 @@
 import requests
+import aiohttp
+import asyncio
 
 
-def getLatestInstagramPosts(username, prevFetchTime):
+async def getLatestInstagramPosts(username, prevFetchTime):
+    await asyncio.sleep(3)
     profileData = dict()
     allData = []
     try:
-        api_url = f"https://www.instagram.com/{username}/feed/?__a=1"
-        userData = requests.get(api_url).json()["graphql"]["user"]
+        async with aiohttp.ClientSession() as session:
+            api_url = f"https://www.instagram.com/{username}/feed/?__a=1"
+            async with session.get(api_url) as resp:
+                response = await resp.json()
+                userData = response["graphql"]["user"]
         imagePostsData = userData["edge_owner_to_timeline_media"]["edges"]
         videoPostsData = userData["edge_felix_video_timeline"]["edges"]
 
@@ -41,6 +47,8 @@ def getLatestInstagramPosts(username, prevFetchTime):
     except Exception as e:
         print(repr(e))
         allData = None
+    finally:
+        await asyncio.sleep(3)
     return allData
 
 
@@ -48,3 +56,9 @@ def checkInstagramUser(username):
     if(requests.get(f"https://www.instagram.com/{username}/feed/?__a=1")):
         return True
     return False
+
+
+async def main():
+    print(await getLatestInstagramPosts('adele', 1))
+if __name__ == "__main__":
+    asyncio.run(main())

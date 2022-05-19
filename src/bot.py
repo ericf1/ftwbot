@@ -1,4 +1,3 @@
-from webbrowser import get
 from dotenv import load_dotenv
 import os
 from turtle import update
@@ -7,10 +6,10 @@ from instagramAPI import getLatestInstagramPosts, checkInstagramUser
 from twitterAPI import getLatestTwitterPosts, checkTwitterUser
 from discord.ext import commands, tasks
 import discord
-
-import logging
 import time
+import asyncio
 from datetime import datetime, timezone
+
 load_dotenv()
 
 socialsData = {
@@ -64,7 +63,10 @@ def updateDoc(server_id, obj):
 
 async def formatter(user, prevTime, socialMedia, channel):
     platform = socialMedia.capitalize()
-    posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
+    posts = await globals()[f"getLatest{platform}Posts"](user, prevTime)
+    print(posts)
+    if(posts == None):
+        return
     for p in posts:
         embed = discord.Embed(
             description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
@@ -75,7 +77,6 @@ async def formatter(user, prevTime, socialMedia, channel):
 
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
-        print(channel.permissions_for())
         try:
             await channel.send(
                 content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
@@ -105,28 +106,44 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(seconds=120.0)  # repeat every 120 seconds
+@tasks.loop(seconds=30.0)  # repeat every 120 seconds
 async def mainLoop():
     await bot.wait_until_ready()
+    await update()
+
+
+async def update():
+    start = time.perf_counter()
     threadsFunctions = []
     for serverID in db.tables():
-        if(doc(serverID).get("prevTime") == None):
-            updateDoc(serverID, {"prevTime": int(time.time())})
-        channel = bot.get_channel(doc(serverID).get("channelID"))
-        if(channel == None):
-            continue
         prevTime = doc(serverID).get("prevTime")
+        print(f"got this server with id: {serverID} and prevTime: {prevTime}")
+        if(prevTime == None):
+            updateDoc(serverID, {"prevTime": int(time.time())})
+        if(doc(serverID).get("channelID") == None):
+            print(f"{serverID} does not have a channel set")
+            continue
+        channel = bot.get_channel(doc(serverID).get("channelID"))
+        channel = doc(serverID).get("channelID")
+        if(channel == None):
+            print(f"{serverID} is no longer connected")
+            continue
         socials = doc(serverID).get("socials")
         for socialMedia in socialsData.keys():
             for user in socials[socialMedia]:
-                params = [user, prevTime, socialMedia, channel]
-                threadsFunctions.append(params)
+                threadsFunctions.append(asyncio.create_task(
+                    formatter(user, prevTime, socialMedia, channel)))
         updateDoc(serverID, {"prevTime": int(time.time())})
-    for params in threadsFunctions:
-        await formatter(params[0], params[1], params[2], params[3])
 
+    for threadsFunction in threadsFunctions:
+        # time.sleep(1)
+        await threadsFunction
+    finish = time.perf_counter()
+    print(f'finished in {round((finish-start)/60.0, 2)} minutes(s)')
 
 # ping will respond pong to ensure that the bot is alive
+
+
 @ bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
