@@ -82,7 +82,7 @@ In order to constantly maintain the bot, we recommend running the Python script 
 
 Technologies Used
 ---
-Python, Discord Python API, Tweepy API, TinyDB, Amazon Web Server
+Python, Discord.py, Tweepy API, TinyDB, Redis, Google API, Reddit API, Amazon Web Server
 
 Made For
 ---
