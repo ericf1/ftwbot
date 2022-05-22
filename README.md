@@ -81,6 +81,10 @@ Our Python code is currently set to check for new posts every two minutes (this 
 
 In order to constantly maintain the bot, we recommend running the Python script through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). We currently run an instance of ubuntu through AWS. 
 
+Questions and Inquiries
+---
+[ericfang1935@gmail.com](mailto:ericfang1935@gmail.com)
+
 Technologies Used
 ---
 Python, Discord.py, Tweepy API, TinyDB, Redis, Google API, Reddit API, Amazon Web Server
