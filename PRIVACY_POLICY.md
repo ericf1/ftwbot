@@ -169,7 +169,7 @@ We have collected the following categories of personal information in the past t
 | Category | Examples | Collected |
 |---------|-----------|-------------|
 |A. Identifiers|Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal identifier, online identifier, Internet Protocol address, email address, and account name|NO|
-|B. Personal information categories listed in the California Customer Records statute|Name, contact information, education, employment, employment history, and financial information|YES|
+|B. Personal information categories listed in the California Customer Records statute|Name, contact information, education, employment, employment history, and financial information|NO|
 |C. Protected classification characteristics under California or federal law|Gender and date of birth|NO|
 |D. Commercial information|Transaction information, purchase history, financial details, and payment information|NO|
 |E. Biometric information|Fingerprints and voiceprints|NO|
