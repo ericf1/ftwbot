@@ -15,7 +15,7 @@ Click on the link and authenticate:
 [Link](https://discord.com/api/oauth2/authorize?client_id=952690377104719964&permissions=517543905344&scope=bot)
 
 If the first link is full:
-[Second Link](https://discord.com/api/oauth2/authorize?client_id=978880834440429578&permissions=534723950656&scope=bot)
+[Second Link](https://discord.com/api/oauth2/authorize?client_id=978880834440429578&permissions=277025474624&scope=bot)
 
 Features
 ---
