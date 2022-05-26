@@ -75,7 +75,6 @@ async def formatter(user, prevTime, socialMedia, channel):
 
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
-        print(channel.permissions_for())
         try:
             await channel.send(
                 content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
