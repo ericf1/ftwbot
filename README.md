@@ -84,7 +84,7 @@ DISCORD_TOKEN=
 ```
 You can find these keys from the [Twitter Developer Portal](https://developer.twitter.com/en/portal/petition/essential/basic-info) and [Discord Developer Portal](https://discord.com/developers/docs/intro)
 
-In vim, to save and exit, execute:
+>In vim, to save and exit, execute:
 ```
 :wq
 ```
