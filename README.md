@@ -59,8 +59,22 @@ git clone https://github.com/ericf1/ftwbot.git
 ```
 or through downloading the source code that is avaliable in the [versions](https://github.com/ericf1/ftwbot/releases)
 
->Create a .env file containing the following inside of the src folder:
-You will need a personal Discord Token, Twitter API Key, and Twitter Access Token
+>Install the necessary libraries by running:
+```
+pip3 install -r requirements.txt
+```
+
+>Change directories to the python code files with:
+```
+cd src
+```
+
+>Create a .env file containing the following inside of the src folder with vim or your favorite text editor:
+```
+vim .env
+```
+
+>You will need a personal Discord Token, Twitter API Key, and Twitter Access Token. Your .env file should be formatted like this:
 ```
 TWITTER_API_KEY=
 TWITTER_API_SECRET_KEY=
@@ -70,9 +84,9 @@ DISCORD_TOKEN=
 ```
 You can find these keys from the [Twitter Developer Portal](https://developer.twitter.com/en/portal/petition/essential/basic-info) and [Discord Developer Portal](https://discord.com/developers/docs/intro)
 
->Install the necessary libraries by running:
+In vim, to save and exit, execute:
 ```
-pip3 install -r requirements.txt
+:wq
 ```
 
 >Start the bot with:
