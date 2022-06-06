@@ -104,7 +104,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(seconds=120.0)  # repeat every 120 seconds
+@tasks.loop(minutes=10.0)  # repeat every 10 minutes
 async def mainLoop():
     await bot.wait_until_ready()
     threadsFunctions = []
