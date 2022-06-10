@@ -1,14 +1,13 @@
-from webbrowser import get
 from dotenv import load_dotenv
 import os
-from turtle import update
 from tinydb import TinyDB
-from instagramAPI import getLatestInstagramPosts, checkInstagramUser
-from twitterAPI import getLatestTwitterPosts, checkTwitterUser
+from apis.instagramAPI import getLatestInstagramPosts, checkInstagramUser
+from apis.twitterapi import getLatestTwitterPosts, checkTwitterUser
 from discord.ext import commands, tasks
 import discord
+import redis
+from redis.commands.json.path import Path
 
-import logging
 import time
 from datetime import datetime, timezone
 load_dotenv()
@@ -25,7 +24,8 @@ socialsData = {
 }
 
 # Setup database
-db = TinyDB('database.json')
+social_data = redis.Redis(host='localhost', port=6379, db=0)
+time_data = redis.Redis(host='localhost', port=6379, db=1)
 
 
 def doc(server_id):
@@ -42,6 +42,14 @@ def doc(server_id):
             table.update({"socials": socialMediaObject})
 
     return table.get(doc_id=1)
+
+
+def get_socials(server_id):
+    return social_data.json().get(str(server_id))
+
+
+def get_time(server_id):
+    return social_data.json().set(server_id, Path.root_path(), data[server_id]["1"])
 
 
 def updateDoc(server_id, obj):
@@ -64,7 +72,10 @@ def updateDoc(server_id, obj):
 
 async def formatter(user, prevTime, socialMedia, channel):
     platform = socialMedia.capitalize()
-    posts = globals()[f"getLatest{platform}Posts"](user, prevTime)
+    posts = await globals()[f"getLatest{platform}Posts"](user, prevTime)
+    print(posts)
+    if posts == None:
+        return
     for p in posts:
         embed = discord.Embed(
             description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
@@ -75,11 +86,8 @@ async def formatter(user, prevTime, socialMedia, channel):
 
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
-        try:
-            await channel.send(
-                content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
-        except Exception as e:
-            print(repr(e))
+        await channel.send(
+            content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
 
 # discord bot commands
 bot = commands.Bot(command_prefix='s!')
@@ -98,13 +106,13 @@ async def addReaction(ctx): await ctx.message.add_reaction("✅")
 def to_lower(arg): return arg.lower()
 
 
-@bot.event
+@ bot.event
 async def on_ready():
     # printing out message so it looks cool
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@tasks.loop(seconds=120.0)  # repeat every 120 seconds
+@ tasks.loop(seconds=1.0)  # repeat every 10 minutes
 async def mainLoop():
     await bot.wait_until_ready()
     threadsFunctions = []
@@ -122,7 +130,10 @@ async def mainLoop():
                 threadsFunctions.append(params)
         updateDoc(serverID, {"prevTime": int(time.time())})
     for params in threadsFunctions:
-        await formatter(params[0], params[1], params[2], params[3])
+        try:
+            await formatter(params[0], params[1], params[2], params[3])
+        except Exception as e:
+            print(repr(e))
 
 
 # ping will respond pong to ensure that the bot is alive
@@ -235,7 +246,6 @@ async def list(ctx):
 
     await addReaction(ctx)
 
-mainLoop.start()
-
 if __name__ == '__main__':
+    mainLoop.start()
     bot.run(os.getenv('DISCORD_TOKEN'))
