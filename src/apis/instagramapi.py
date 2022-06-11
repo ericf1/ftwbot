@@ -1,3 +1,4 @@
+import re
 import requests
 import aiohttp
 import asyncio
@@ -50,14 +51,22 @@ async def get_latest_instagram_post(username, prev_fetch_time):
     return all_data
 
 
-def check_instagram_user(username):
-    if(requests.get(f"https://www.instagram.com/{username}/feed/?__a=1")):
+async def check_instagram_user(username):
+    await asyncio.sleep(5)
+    try:
+        response = requests.get(
+            f"https://www.instagram.com/{username}/feed/?__a=1")
+        if not response.json():
+            return False
         return True
-    return False
+    except Exception as e:
+        print(repr(e))
+        return False
 
 
 async def main():
-    print(await get_latest_instagram_post('adele', 1))
+    # print(await get_latest_instagram_post('adele', 1))
+    print(await check_instagram_user('adele'))
 if __name__ == "__main__":
     for _ in range(10):
         asyncio.run(main())

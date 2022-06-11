@@ -4,6 +4,7 @@ from redis.commands.json.path import Path
 
 social_data = redis.Redis(host='localhost', port=6379, db=0)
 time_data = redis.Redis(host='localhost', port=6379, db=1)
+settings_data = redis.Redis(host='localhost', port=6379, db=2)
 
 with open('src\database\database.json') as json_file:
     data = json.load(json_file)
@@ -15,7 +16,7 @@ for server_id, socials in data.items():
     channel_id = server_data.get("channelID")
     if channel_id:
         del server_data["channelID"]
-        server_data["channelIDs"] = [channel_id]
+        settings_data["channelIDs"] = [channel_id]
     time_value = data[server_id]["1"]["prevTime"]
     if time_value:
         del data[server_id]["1"]["prevTime"]

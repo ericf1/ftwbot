@@ -26,12 +26,21 @@ class SocialsDatabase:
         pass
 
     @property
-    def all(self):
-        def all_items(db):
-            return [key for key in db.scan_iter("user:*")]
-        return all_items(self.social_data)
+    def all_socials(self):
+        return [{key.decode('utf-8'): self.social_data.json().get(key.decode('utf-8'))} for key in self.social_data.scan_iter()]
+
+    @property
+    def all_settings(self):
+        return [{key.decode('utf-8'): self.settings_data.get(key.decode('utf-8'))} for key in self.social_data.scan_iter()]
+
+    @property
+    def all_time(self):
+        return [{key.decode('utf-8'): self.time_data.get(key.decode('utf-8'))} for key in self.social_data.scan_iter()]
+
+    def __repr__(self):
+        return f"Social Database: {self.all_socials}\nTime Database: {self.all_time}\nSettings Database: {self.all_settings}"
 
 
 if __name__ == "__main__":
     socials_database = SocialsDatabase()
-    print(socials_database.all)
+    print(socials_database)
