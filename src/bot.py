@@ -11,83 +11,45 @@ from database.base_redis import SocialsDatabase
 import time
 from datetime import datetime, timezone
 
-# Setup database
+# Necessary functional commands
 load_dotenv()
-social_data = redis.Redis(host='localhost', port=6379, db=0)
-time_data = redis.Redis(host='localhost', port=6379, db=1)
+socials_database = SocialsDatabase()
+bot = commands.Bot(command_prefix='s!', case_insensitive=True)
 
 
-def doc(server_id):
-    table = db.table(str(server_id))
-
-    if not table.get(doc_id=1):
-        table.insert({"socials": {}})
-
-    for socialMedia in socialsData.keys():
-        if socialMedia not in table.get(doc_id=1)["socials"].keys():
-            socialMediaObject = table.get(doc_id=1)["socials"]
-            socialMediaObject[socialMedia] = []
-
-            table.update({"socials": socialMediaObject})
-
-    return table.get(doc_id=1)
+# Helper functions
+async def has_perms(ctx):
+    has_perms = ctx.author.permissions_in(ctx.channel).manage_channels
+    if not has_perms:
+        await ctx.send("You do not have permission to use this command.")
+    return has_perms
 
 
+async def add_reaction(ctx): await ctx.message.add_reaction("✅")
 
 
+def to_lower(arg): return arg.lower()
 
-def updateDoc(server_id, obj):
-    table = db.table(str(server_id))
-
-    if not table.get(doc_id=1):
-        table.insert({"socials": {}})
-
-    for socialMedia in socialsData.keys():
-        if socialMedia not in table.get(doc_id=1)["socials"].keys():
-            socialMediaObject = table.get(doc_id=1)["socials"]
-            socialMediaObject[socialMedia] = []
-
-            table.update({"socials": socialMediaObject})
-
-    table.update(obj, doc_ids=[1])
 
 # formatter function that sends the correct social media post
-
-
-async def formatter(user, prevTime, socialMedia, channel):
-    platform = socialMedia.capitalize()
-    posts = await globals()[f"getLatest{platform}Posts"](user, prevTime)
+async def formatter(user, prev_time, social_media, channel):
+    platform = social_media.capitalize()
+    posts = await globals()[f"getLatest{platform}Posts"](user, prev_time)
     print(posts)
     if posts == None:
         return
     for p in posts:
         embed = discord.Embed(
-            description=p["post_text"], color=socialsData[socialMedia]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
+            description=p["post_text"], color=SOCIALS_DATA[social_media]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
         embed.set_author(
             name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
         embed.set_footer(
-            text=platform, icon_url=socialsData[socialMedia]["icon"])
+            text=platform, icon_url=SOCIALS_DATA[social_media]["icon"])
 
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
         await channel.send(
             content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
-
-# discord bot commands
-bot = commands.Bot(command_prefix='s!')
-
-
-async def hasPerms(ctx):
-    hasPerms = ctx.author.permissions_in(ctx.channel).manage_channels
-    if not hasPerms:
-        await ctx.send("You do not have permission to use this command.")
-    return hasPerms
-
-
-async def addReaction(ctx): await ctx.message.add_reaction("✅")
-
-
-def to_lower(arg): return arg.lower()
 
 
 @ bot.event
@@ -96,39 +58,15 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-@ tasks.loop(seconds=1.0)  # repeat every 10 minutes
-async def mainLoop():
-    await bot.wait_until_ready()
-    threadsFunctions = []
-    for serverID in db.tables():
-        if(doc(serverID).get("prevTime") == None):
-            updateDoc(serverID, {"prevTime": int(time.time())})
-        channel = bot.get_channel(doc(serverID).get("channelID"))
-        if(channel == None):
-            continue
-        prevTime = doc(serverID).get("prevTime")
-        socials = doc(serverID).get("socials")
-        for socialMedia in socialsData.keys():
-            for user in socials[socialMedia]:
-                params = [user, prevTime, socialMedia, channel]
-                threadsFunctions.append(params)
-        updateDoc(serverID, {"prevTime": int(time.time())})
-    for params in threadsFunctions:
-        try:
-            await formatter(params[0], params[1], params[2], params[3])
-        except Exception as e:
-            print(repr(e))
-
-
 # ping will respond pong to ensure that the bot is alive
 @ bot.command()
 async def ping(ctx):
     await ctx.send('Pong')
-    await addReaction(ctx)
+    await add_reaction(ctx)
 
 
 @ bot.command()
-async def setChannel(ctx, channel: discord.TextChannel = None):
+async def addChannel(ctx, channel: discord.TextChannel = None):
     if not await hasPerms(ctx):
         return
 
@@ -140,10 +78,10 @@ async def setChannel(ctx, channel: discord.TextChannel = None):
     if(doc(ctx.guild.id).get("prevTime") == None):
         updateDoc(ctx.guild.id, {"prevTime": int(time.time())})
 
-    await addReaction(ctx)
+    await add_reaction(ctx)
 
 
-@ setChannel.error
+@ addChannel.error
 async def setChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
@@ -230,6 +168,30 @@ async def list(ctx):
 
     await addReaction(ctx)
 
+
+@ tasks.loop(seconds=1.0)  # repeat every 10 minutes
+async def main_loop():
+    await bot.wait_until_ready()
+    threadsFunctions = []
+    for serverID in db.tables():
+        if(doc(serverID).get("prevTime") == None):
+            updateDoc(serverID, {"prevTime": int(time.time())})
+        channel = bot.get_channel(doc(serverID).get("channelID"))
+        if(channel == None):
+            continue
+        prevTime = doc(serverID).get("prevTime")
+        socials = doc(serverID).get("socials")
+        for socialMedia in socialsData.keys():
+            for user in socials[socialMedia]:
+                params = [user, prevTime, socialMedia, channel]
+                threadsFunctions.append(params)
+        updateDoc(serverID, {"prevTime": int(time.time())})
+    for params in threadsFunctions:
+        try:
+            await formatter(params[0], params[1], params[2], params[3])
+        except Exception as e:
+            print(repr(e))
+
 if __name__ == '__main__':
-    mainLoop.start()
+    main_loop.start()
     bot.run(os.getenv('DISCORD_TOKEN'))
