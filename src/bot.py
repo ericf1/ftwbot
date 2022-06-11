@@ -1,29 +1,18 @@
+from _social_data import SOCIALS_DATA
+
 from dotenv import load_dotenv
 import os
-from tinydb import TinyDB
-from apis.instagramAPI import getLatestInstagramPosts, checkInstagramUser
-from apis.twitterapi import getLatestTwitterPosts, checkTwitterUser
+
 from discord.ext import commands, tasks
 import discord
-import redis
-from redis.commands.json.path import Path
+
+from database.base_redis import SocialsDatabase
 
 import time
 from datetime import datetime, timezone
-load_dotenv()
-
-socialsData = {
-    "instagram": {
-        "icon": "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png",
-        "color": 13453419
-    },
-    "twitter": {
-        "icon": "https://abs.twimg.com/responsive-web/client-web/icon-ios.b1fc7275.png",
-        "color": 44270
-    }
-}
 
 # Setup database
+load_dotenv()
 social_data = redis.Redis(host='localhost', port=6379, db=0)
 time_data = redis.Redis(host='localhost', port=6379, db=1)
 
@@ -44,12 +33,7 @@ def doc(server_id):
     return table.get(doc_id=1)
 
 
-def get_socials(server_id):
-    return social_data.json().get(str(server_id))
 
-
-def get_time(server_id):
-    return social_data.json().set(server_id, Path.root_path(), data[server_id]["1"])
 
 
 def updateDoc(server_id, obj):

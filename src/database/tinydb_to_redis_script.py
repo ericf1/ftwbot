@@ -5,17 +5,23 @@ from redis.commands.json.path import Path
 social_data = redis.Redis(host='localhost', port=6379, db=0)
 time_data = redis.Redis(host='localhost', port=6379, db=1)
 
-with open('redis-scripts\database.json') as json_file:
+with open('src\database\database.json') as json_file:
     data = json.load(json_file)
 
 corrected_key_value_pairs = {}
 time_key_value_pairs = {}
 for server_id, socials in data.items():
-    time_value = data[server_id]["1"]["prevTime"]
-    del data[server_id]["1"]["prevTime"]
+    server_data = data[server_id]["1"]
+    channel_id = server_data.get("channelID")
+    if channel_id:
+        del server_data["channelID"]
+        server_data["channelIDs"] = [channel_id]
+    print(server_data)
+    # time_value = data[server_id]["1"]["prevTime"]
+    # del data[server_id]["1"]["prevTime"]
     # corrected_key_value_pairs[server_id] = data[server_id]["1"]
-    time_data.set(server_id, time_value)
-    social_data.json().set(server_id, Path.root_path(), data[server_id]["1"])
+    # time_data.set(server_id, time_value)
+    # social_data.json().set(server_id, Path.root_path(), data[server_id]["1"])
 
 # with open('redis-data.json', 'w') as f:
     # json.dump(corrected_key_value_pairs, f)
