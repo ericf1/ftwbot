@@ -16,15 +16,15 @@ for server_id, socials in data.items():
     if channel_id:
         del server_data["channelID"]
         server_data["channelIDs"] = [channel_id]
-    print(server_data)
-    # time_value = data[server_id]["1"]["prevTime"]
-    # del data[server_id]["1"]["prevTime"]
-    # corrected_key_value_pairs[server_id] = data[server_id]["1"]
-    # time_data.set(server_id, time_value)
-    # social_data.json().set(server_id, Path.root_path(), data[server_id]["1"])
-
+    time_value = data[server_id]["1"]["prevTime"]
+    if time_value:
+        del data[server_id]["1"]["prevTime"]
+        time_data.set(server_id, time_value)
+    corrected_key_value_pairs[server_id] = data[server_id]["1"]
+    social_data.json().set(server_id, Path.root_path(), data[server_id]["1"])
+# print(corrected_key_value_pairs)
 # with open('redis-data.json', 'w') as f:
-    # json.dump(corrected_key_value_pairs, f)
+# json.dump(corrected_key_value_pairs, f)
 
 # docker run -d -p 6379:6379 -v <volume-name>:/data --name ftw redislabs/rejson:latest
 # docker run -d -p 6379:6379 -v <path>:/data --name ftw redislabs/rejson:latest
