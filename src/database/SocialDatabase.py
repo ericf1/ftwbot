@@ -32,8 +32,8 @@ class SocialDatabase(Database):
         original_data = self.data.json().get(server_id)
         if social_media not in original_data:
             original_data[social_media] = []
-        if username in original_data[social_media]:
-            raise ValueError("User is already in database")
+        # if username in original_data[social_media]:
+        #     raise ValueError("User is already in database")
         original_data[social_media].append(username)
         self.data.json().set(server_id, Path.root_path(), original_data)
 

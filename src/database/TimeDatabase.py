@@ -25,7 +25,7 @@ class TimeDatabase(Database):
 
     def get(self, server_id):
         self.check(server_id)
-        return int(self.data.get(server_id))
+        return int(float(self.data.get(server_id).decode('utf-8')))
 
     def add(self, server_id, new_time: int):
         self.check(server_id)

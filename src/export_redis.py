@@ -13,18 +13,30 @@ def export_redis():
     exported_json = dict()
 
     for social in social_database.all:
-        exported_json.update(social)
+        for key, value in social.items():
+            if exported_json.get(key) is None:
+                exported_json[key] = {}
+            exported_json[key].update({"socials": value})
 
     for time in time_database.all:
-        exported_json.update(time)
+        for key, value in time.items():
+            if exported_json.get(key) is None:
+                exported_json[key] = {}
+            exported_json[key].update({"prev_time": value})
 
     for setting in settings_database.all:
-        exported_json.update(setting)
+        for key, value in setting.items():
+            if exported_json.get(key) is None:
+                exported_json[key] = {}
+            exported_json[key].update({"settings": value})
 
     for channel in channels_database.all:
-        exported_json.update(channel)
+        for key, value in channel.items():
+            if exported_json.get(key) is None:
+                exported_json[key] = {}
+            exported_json[key].update({"channel_ids": value})
 
-    print(exported_json)
+    print(exported_json['807956982274588693'])
 
 
 if __name__ == "__main__":

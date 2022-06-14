@@ -1,5 +1,3 @@
-import re
-import requests
 import aiohttp
 import asyncio
 
@@ -47,21 +45,21 @@ async def get_latest_instagram_post(username, prev_fetch_time):
 
     except Exception as e:
         print(repr(e))
-        all_data = []
-    return all_data
+        return {"data": repr(e), "success": False, "API": "Instagram", "username": username, "prev_time": prev_fetch_time}
+    return {"data": all_data, "success": True, "API": "Instagram", "username": username, "prev_time": prev_fetch_time}
 
 
 async def check_instagram_user(username):
     await asyncio.sleep(1)
     try:
-        response = requests.get(
-            f"https://www.instagram.com/{username}/feed/?__a=1")
-        if not response.json():
-            return False
-        return True
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://www.instagram.com/{username}/feed/?__a=1") as resp:
+                if not resp.json():
+                    return {"data": False, "success": True, "API": "Twitter", "username": username}
+        return {"data": True, "success": True, "API": "Twitter", "username": username}
     except Exception as e:
         print(repr(e))
-        return False
+        return {"data": False, "success": True, "API": "Twitter", "username": username}
 
 
 async def main():
