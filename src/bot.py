@@ -1,23 +1,36 @@
+from datetime import datetime, timezone
+from multiprocessing.sharedctypes import Value
+import time
 from _social_data import SOCIALS_DATA
 
 from dotenv import load_dotenv
+import requests
 import os
+import sys
 
 from discord.ext import commands, tasks
 import discord
 
-from database.base_redis import SocialsDatabase
+from database.ChannelsDatabase import ChannelsDatabase
+from database.SocialDatabase import SocialDatabase
+from database.TimeDatabase import TimeDatabase
+from database.SettingsDatabase import SettingsDatabase
 
-import time
-from datetime import datetime, timezone
 
 # Necessary functional commands
 load_dotenv()
-socials_database = SocialsDatabase()
-bot = commands.Bot(command_prefix='s!', case_insensitive=True)
+social_database = SocialDatabase(0)
+time_database = TimeDatabase(1)
+settings_database = SettingsDatabase(2)
+channels_database = ChannelsDatabase(3)
 
+SERVER_API = os.getenv("API_SERVER")
+bot = commands.Bot(command_prefix='s!', case_insensitive=True)
+http = requests.Session()
 
 # Helper functions
+
+
 async def has_perms(ctx):
     has_perms = ctx.author.permissions_in(ctx.channel).manage_channels
     if not has_perms:
@@ -65,133 +78,176 @@ async def ping(ctx):
     await add_reaction(ctx)
 
 
+# Channel commands:
 @ bot.command()
 async def addChannel(ctx, channel: discord.TextChannel = None):
-    if not await hasPerms(ctx):
+    if not await has_perms(ctx):
         return
 
     if channel:
-        updateDoc(ctx.guild.id, {"channelID": channel.id})
+        channels_database.add(ctx.guild.id, channel.id)
     else:
-        updateDoc(ctx.guild.id, {"channelID": ctx.channel.id})
-
-    if(doc(ctx.guild.id).get("prevTime") == None):
-        updateDoc(ctx.guild.id, {"prevTime": int(time.time())})
+        channels_database.add(ctx.guild.id, ctx.channel.id)
 
     await add_reaction(ctx)
 
 
 @ addChannel.error
-async def setChannel_error(ctx, error):
+async def addChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
 
 
 @ bot.command()
-async def add(ctx, socialMedia: to_lower, user: str):
-    if not await hasPerms(ctx):
+async def removeChannel(ctx, channel: discord.TextChannel = None):
+    if not await has_perms(ctx):
+        return
+
+    channels_database.remove(ctx.guild.id, channel.id)
+
+    await add_reaction(ctx)
+
+
+@ removeChannel.error
+async def removeChannel_error(ctx, error):
+    if isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
+
+
+@ bot.command()
+async def listChannel(ctx):
+    if not await has_perms(ctx):
+        return
+    embed = discord.Embed(title="Channels", description='\n'.join(
+        channels_database.get(ctx.guild.id)), color=1146986)
+
+    embed.set_footer(text="Channels",
+                     icon_url="pictures\icons8-restart.gif")
+    await ctx.send(embed=embed)
+    await add_reaction(ctx)
+
+
+@ listChannel.error
+async def listChannel_error(ctx, error):
+    if isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
+
+
+# Social Media Usernames:
+@ bot.command()
+async def add(ctx, social_media: to_lower, user: str):
+    if not await has_perms(ctx):
         return
 
     # checking the first argument (platform management)
-    if socialMedia not in socialsData.keys():
-        await ctx.send(f"Invalid social media site entered. Available social media platforms are {', '.join(socialsData.keys())}.")
+    if social_media not in SOCIALS_DATA.keys():
+        await ctx.send(f"Invalid social media site entered. Available social media platforms are {', '.join(SOCIALS_DATA.keys())}.")
         return
 
-    platform = socialMedia.capitalize()
+    platform_capitalize = social_media.capitalize()
     # checks if user account doesn't exist
-    if not globals()[f"check{platform}User"](user):
-        await ctx.send(f"`User {user}` does not exist on {platform}.")
+    url = f"{SERVER_API}/{social_media}-user"
+    params = {'username': user}
+    resp = http.get(url, params=params)
+
+    if not resp.json().get("result"):
+        await ctx.send(f"`User {user}` does not exist on {platform_capitalize}.")
         return
 
-    # checks if user exists in database already
-    if user in doc(ctx.guild.id)["socials"][socialMedia]:
-        await ctx.send(f"Updates from `{user}` already exist.")
-        return
+    social_database.add(ctx.guild.id, user)
 
-    socialsObj = doc(ctx.guild.id)["socials"]
-    socialsObj[socialMedia] = [*socialsObj[socialMedia], user]
-
-    updateDoc(ctx.guild.id, {"socials": socialsObj})
-
-    await addReaction(ctx)
+    await add_reaction(ctx)
 
 
 @ add.error
 async def add_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!add {social-media-site} {username}`")
+        return
+    if isinstance(error, ValueError):
+        await ctx.send("The user already exists in the list")
+        return
+    await ctx.send(repr(error))
 
 
 @ bot.command()
-async def remove(ctx, socialMedia: to_lower, user: str):
-    if not await hasPerms(ctx):
+async def remove(ctx, social_media: to_lower, user: str):
+    if not await has_perms(ctx):
         return
 
     # checking the first argument (platform management)
-    if socialMedia != "twitter" and socialMedia != "instagram":
-        await ctx.send("Invalid social media site entered. Available social media platforms are `twitter` and `instagram`.")
+    if social_media not in SOCIALS_DATA.keys():
+        await ctx.send(f"Invalid social media site entered. Available social media platforms are {', '.join(SOCIALS_DATA.keys())}.")
         return
 
-    # checks if user exists in database
-    if not user in doc(ctx.guild.id)["socials"][socialMedia]:
-        await ctx.send(f"Updates from `{user}` on {socialMedia} don't exist.")
-        return
+    social_database.remove(ctx.guild.id, user)
 
-    users = doc(ctx.guild.id)["socials"][socialMedia]
-    users.pop(users.index(user))
-
-    socialsObj = doc(ctx.guild.id)["socials"]
-    socialsObj[socialMedia] = users
-
-    updateDoc(ctx.guild.id, {"socials": socialsObj})
-
-    await addReaction(ctx)
+    await add_reaction(ctx)
 
 
 @ remove.error
 async def remove_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!remove {social-media-site} {username}`")
+        return
+    await ctx.send(repr(error))
 
 
 @ bot.command()
 async def list(ctx):
-    if not await hasPerms(ctx):
+    if not await has_perms(ctx):
         return
 
-    for socialMedia in socialsData:
-        embed = discord.Embed(title="Accounts", description='\n'.join(doc(ctx.guild.id)[
-            "socials"][socialMedia]), color=socialsData[socialMedia]["color"])
-        embed.set_footer(text=socialMedia.capitalize(),
-                         icon_url=socialsData[socialMedia]["icon"])
+    for social_media, v in SOCIALS_DATA.items():
+        accounts = social_database.get(ctx.guild.id).get(social_media)
+        if accounts is None:
+            accounts = []
+        embed = discord.Embed(
+            title="Accounts", description='\n'.join(accounts), color=v["color"])
+        embed.set_footer(text=social_media.capitalize(),
+                         icon_url=v["icon"])
         await ctx.send(embed=embed)
 
-    await addReaction(ctx)
+    await add_reaction(ctx)
+
+
+@ list.error
+async def list_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!remove {social-media-site} {username}`")
+        return
+    await ctx.send(repr(error))
 
 
 @ tasks.loop(seconds=1.0)  # repeat every 10 minutes
 async def main_loop():
     await bot.wait_until_ready()
-    threadsFunctions = []
-    for serverID in db.tables():
-        if(doc(serverID).get("prevTime") == None):
-            updateDoc(serverID, {"prevTime": int(time.time())})
-        channel = bot.get_channel(doc(serverID).get("channelID"))
-        if(channel == None):
+    for server_id in social_database.all:
+        prev_time = time_database.get(server_id)
+        socials = social_database.get(server_id)
+        channels = channels_database.get(server_id)
+        if channels is None or channels is []:
             continue
-        prevTime = doc(serverID).get("prevTime")
-        socials = doc(serverID).get("socials")
-        for socialMedia in socialsData.keys():
-            for user in socials[socialMedia]:
+        for channel_id in channels:
+            channel = bot.get_channel(int(channel_id))
+            if(channel == None):
+                continue
+            for socialMedia in socialsData.keys():
+                for user in socials[socialMedia]:
                 params = [user, prevTime, socialMedia, channel]
                 threadsFunctions.append(params)
         updateDoc(serverID, {"prevTime": int(time.time())})
-    for params in threadsFunctions:
         try:
             await formatter(params[0], params[1], params[2], params[3])
         except Exception as e:
             print(repr(e))
 
+
+def error_func():
+    raise ValueError("AHHAA")
+
+
 if __name__ == '__main__':
-    main_loop.start()
-    bot.run(os.getenv('DISCORD_TOKEN'))
+    # main_loop.start()
+    # bot.run(os.getenv('DISCORD_TOKEN'))
+    pass

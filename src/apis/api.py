@@ -23,7 +23,7 @@ def instagram():
     username = request.args.get('username')
     prev_time = int(request.args.get('prev_time'))
     result = asyncify(get_latest_instagram_post, username, prev_time)
-    return jsonify({"result": result})
+    return jsonify({"result": result}), 202
 
 
 @app.route('/twitter', methods=["GET"])
@@ -31,21 +31,21 @@ def twitter():
     username = request.args.get('username')
     prev_time = int(request.args.get('prev_time'))
     result = asyncify(get_latest_twitter_post, username, prev_time)
-    return jsonify({"result": result})
+    return jsonify({"result": result}), 202
 
 
 @app.route('/twitter-user', methods=["GET"])
 def twitter_user():
     username = request.args.get('username')
     result = asyncify(check_twitter_user, username)
-    return jsonify({"result": result})
+    return jsonify({"result": result}), 202
 
 
 @app.route('/instagram-user', methods=["GET"])
 def instagram_user():
     username = request.args.get('username')
     result = asyncify(check_instagram_user, username)
-    return jsonify({"result": result})
+    return jsonify({"result": result}), 202
 
 
 if __name__ == "__main__":
