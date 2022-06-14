@@ -27,7 +27,7 @@ class TimeDatabase(Database):
         self.check(server_id)
         return int(self.data.get(server_id))
 
-    def add(self, server_id, new_time):
+    def add(self, server_id, new_time: int):
         self.check(server_id)
         self.data.set(server_id, new_time)
 

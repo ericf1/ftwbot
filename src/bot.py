@@ -1,12 +1,10 @@
 from datetime import datetime, timezone
-from multiprocessing.sharedctypes import Value
 import time
 from _social_data import SOCIALS_DATA
 
 from dotenv import load_dotenv
 import requests
 import os
-import sys
 
 from discord.ext import commands, tasks
 import discord
@@ -45,9 +43,12 @@ def to_lower(arg): return arg.lower()
 
 
 # formatter function that sends the correct social media post
-async def formatter(user, prev_time, social_media, channel):
+async def formatter(user, prev_time, social_media, channels, settings):
     platform = social_media.capitalize()
-    posts = await globals()[f"getLatest{platform}Posts"](user, prev_time)
+    url = f"{SERVER_API}/{social_media}"
+    params = {'username': user, "prev_time": prev_time}
+    resp = http.get(url, params=params)
+    posts = resp.json().get("result")
     print(posts)
     if posts == None:
         return
@@ -58,11 +59,25 @@ async def formatter(user, prev_time, social_media, channel):
             name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
         embed.set_footer(
             text=platform, icon_url=SOCIALS_DATA[social_media]["icon"])
-
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
-        await channel.send(
-            content=f"**New post from {user} on {platform}**\n{p['post_URL']}\n{'Click to view video' if p.get('post_isVideo') else ''}", embed=embed)
+
+        for channel_id in channels:
+            channel = bot.get_channel(int(channel_id))
+            if channel is None:
+                continue
+            new_post_str = f"**New post from {user} on {platform}**\n{p['post_URL']}\n"
+            video_str = f'Click to view video' if p.get(
+                'post_is_video') else ''
+            if settings.get("language") == "Spanish":
+                new_post_str = f"**Nuevo contenido de {user} en {platform}**\n{p['post_URL']}\n"
+                video_str = f'Haga clic para ver el vídeo' if p.get(
+                    'post_is_video') else ''
+            if settings.get("send_video_as_link") == "Yes" and p.get('post_is_video'):
+                video_str = ""
+                await channel.send(content=f"{new_post_str}{video_str}")
+                continue
+            await channel.send(content=f"{new_post_str}{video_str}", embed=embed)
 
 
 @ bot.event
@@ -226,25 +241,15 @@ async def main_loop():
         prev_time = time_database.get(server_id)
         socials = social_database.get(server_id)
         channels = channels_database.get(server_id)
-        if channels is None or channels is []:
-            continue
-        for channel_id in channels:
-            channel = bot.get_channel(int(channel_id))
-            if(channel == None):
-                continue
-            for socialMedia in socialsData.keys():
-                for user in socials[socialMedia]:
-                params = [user, prevTime, socialMedia, channel]
-                threadsFunctions.append(params)
-        updateDoc(serverID, {"prevTime": int(time.time())})
-        try:
-            await formatter(params[0], params[1], params[2], params[3])
-        except Exception as e:
-            print(repr(e))
-
-
-def error_func():
-    raise ValueError("AHHAA")
+        settings = settings_database.get(server_id)
+        for social_media in SOCIALS_DATA.keys():
+            for user in socials[social_media]:
+                params = [user, prev_time, social_media, channels, settings]
+                try:
+                    await formatter(params[0], params[1], params[2], params[3], params[4])
+                except Exception as e:
+                    print(repr(e))
+        time_database.add(server_id, time.time())
 
 
 if __name__ == '__main__':

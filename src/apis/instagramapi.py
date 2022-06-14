@@ -31,7 +31,7 @@ async def get_latest_instagram_post(username, prev_fetch_time):
                         data["post_URL"] = f"https://www.instagram.com/p/{data['post_id']}/"
                         data["post_timestamp"] = post_data["node"]["taken_at_timestamp"]
 
-                        data["post_isVideo"] = post_data["node"]["is_video"]
+                        data["post_is_video"] = post_data["node"]["is_video"]
                         data["post_media_URL"] = post_data["node"]["display_url"]
 
                         if post_data["node"]["edge_media_to_caption"]["edges"]:
