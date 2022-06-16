@@ -1,3 +1,7 @@
+# Announcements
+
+The bot will go down for Instagram at 12AM 6/17 EST
+
 # FTWBot
 
 <!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem> -->
