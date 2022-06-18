@@ -1,6 +1,6 @@
 # Announcements
 
-The bot will go down for Instagram at 12AM 6/17 EST
+Instagram is currently still not working. There will be a massive update tomorrow night that will resolve this issue hopefully permenantly.
 
 # FTWBot
 
@@ -9,7 +9,7 @@ The bot will go down for Instagram at 12AM 6/17 EST
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 194 servers!
+We are currently supporting over 196 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
