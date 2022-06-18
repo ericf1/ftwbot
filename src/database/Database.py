@@ -6,6 +6,8 @@
 
 
 class Database:
+    __slots__ = ("data")
+
     def __init__(self, db_val):
         pass
 

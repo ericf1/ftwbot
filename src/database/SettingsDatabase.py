@@ -5,6 +5,8 @@ from ._supported_settings import SUPPORTED_SETTINGS_DATA, DEFAULT_SETTINGS_DATA
 
 
 class SettingsDatabase(Database):
+    __slots__ = ("data")
+
     def __init__(self, db_val):
         self.data = redis.Redis(host='localhost', port=6379, db=db_val)
 

@@ -46,37 +46,45 @@ def to_lower(arg): return arg.lower()
 
 async def texts_to_discord_channels(channel_ids):
     channels = []
+
+    if testing:
+        channels = [bot.get_channel(int(channel_id))
+                    for channel_id in channels]
+        return channels
+
     for channel_id in channel_ids:
         got_channel = bot.get_channel(int(channel_id))
         if got_channel is not None:
             channels.append(got_channel)
-    channel_list = [await bot.get_channel(int(
-        channel_id)) for channel_id in channels if bot.get_channel(int(channel_id)) is not None]
+    return channels
 
-    if testing:
-        channel_list = [bot.get_channel(int(channel_id))
-                        for channel_id in channels]
+
+async def request_posts(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            posts_req = await resp.json()
+            return posts_req
 
 # formatter function that sends the correct social media post
 
 
 async def formatter(user, prev_time, social_media, channels, settings):
     # get all the avaliable channels
-    texts_to_discord_channels(channels)
-
-    if not channel_list:
+    all_channels = texts_to_discord_channels(channels)
+    if not all_channels:
         return {"channels_exist": False, "api_success": "Unknown"}
+
     platform = social_media.capitalize()
 
     url = f"{SERVER_API}/{social_media}?username={user}&prev_time={prev_time}"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
-            posts_req = await resp.json()
+    posts_req = await request_posts(url)
     if posts_req.get("success") is False:
         return {"channels_exist": True, "api_success": False, "api_type": posts_req.get("API"), "data": posts_req.get('data'), "time_elapsed": posts_req.get("Time elapsed")}
+
     posts = posts_req.get("data")
     if posts == [] or posts is None:
         return {"channels_exist": True, "api_success": True, "api_type": posts_req.get("API"), "data": posts, "time_elapsed": posts_req.get("Time elapsed")}
+
     for p in posts:
         embed = discord.Embed(
             description=p["post_text"], color=SOCIALS_DATA[social_media]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
@@ -86,6 +94,7 @@ async def formatter(user, prev_time, social_media, channels, settings):
             text=platform, icon_url=SOCIALS_DATA[social_media]["icon"])
         if p.get("post_media_URL"):
             embed.set_image(url=p["post_media_URL"])
+
         if testing is True:
             new_post_str = f"**New post from {user} on {platform}**\n{p['post_URL']}\n"
             video_str = f'Click to view video' if p.get(
@@ -93,7 +102,8 @@ async def formatter(user, prev_time, social_media, channels, settings):
             channel = bot.get_channel(973770780938743850)
             await channel.send(content=f"{new_post_str}{video_str}", embed=embed)
             return {"channels_exist": True, "API Success": True, "api_type": posts_req.get("API"), "data": posts, "time_elapsed": posts_req.get("Time elapsed")}
-        for channel in channel_list:
+
+        for channel in all_channels:
             if channel is None:
                 continue
             new_post_str = f"**New post from {user} on {platform}**\n{p['post_URL']}\n"
@@ -192,15 +202,15 @@ async def add(ctx, social_media: to_lower, user: str):
 
     platform_capitalize = social_media.capitalize()
     # checks if user account doesn't exist
-    url = f"{SERVER_API}/{social_media}-user"
-    params = {'username': user}
-    resp = await http.get(url, params=params)
+    url = f"{SERVER_API}/{social_media}-user?username={user}"
 
-    if not resp.json().get("result"):
+    resp = await request_posts(url)
+
+    if not resp.get("data"):
         await ctx.send(f"`User {user}` does not exist on {platform_capitalize}.")
         return
 
-    social_database.add(ctx.guild.id, user)
+    social_database.add(ctx.guild.id, social_media, user)
 
     await add_reaction(ctx)
 
@@ -282,7 +292,11 @@ async def main_loop():
                     params = [user, prev_time,
                               social_media, channels, settings, server_id]
                     param_count += 1
-                    print(params, param_count)
+                    print("Params: " + params)
+                    result = await formatter(params[0], params[1], params[2], params[3], params[4])
+                    print("Result: " + result)
+
+                    # print(params, param_count)
             #         try:
             #             result = await formatter(params[0], params[1], params[2], params[3], params[4])
             #             if result.get("channels_exist") is False:

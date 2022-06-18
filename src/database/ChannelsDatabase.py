@@ -3,6 +3,8 @@ import redis
 
 
 class ChannelsDatabase(Database):
+    __slots__ = ("data")
+    
     def __init__(self, db_id):
         self.data = redis.Redis(host='localhost', port=6379, db=db_id)
 
