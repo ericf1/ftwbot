@@ -78,6 +78,11 @@ cd src
 vim .env
 ```
 
+>To start inserting with vim, you need to write:
+```
+i
+```
+
 >You will need a personal Discord Token, Twitter API Key, and Twitter Access Token. Your .env file should be formatted like this:
 ```
 TWITTER_API_KEY=
