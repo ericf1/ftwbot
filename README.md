@@ -1,6 +1,6 @@
 # Announcements
 
-Instagram is currently still not working. There will be a massive update tomorrow night that will resolve this issue hopefully permenantly.
+The bots should be working. We will be shipping out a new version of the database and the api soon (next 1-3 days) which should make everything run more smoothly.
 
 # FTWBot
 
