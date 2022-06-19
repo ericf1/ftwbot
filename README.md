@@ -2,6 +2,8 @@
 
 The bots should be working. We will be shipping out a new version of the database and the api soon (next 1-3 days) which should make everything run more smoothly.
 
+We will also release a third FTW Bot soon (next 1-2 days). 
+
 # FTWBot
 
 <!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem> -->
@@ -9,7 +11,7 @@ The bots should be working. We will be shipping out a new version of the databas
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 196 servers!
+We are currently supporting 200 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
