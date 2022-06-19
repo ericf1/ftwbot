@@ -27,6 +27,7 @@ SERVER_API = os.getenv("API_SERVER")
 bot = commands.Bot(command_prefix='s!', case_insensitive=True)
 http = requests.Session()
 testing = True
+TESTING_CHANNEL = os.getenv("TESTING_CHANNEL")
 
 # Helper functions
 
@@ -39,9 +40,6 @@ async def has_perms(ctx):
 
 
 async def add_reaction(ctx): await ctx.message.add_reaction("✅")
-
-
-def to_lower(arg): return arg.lower()
 
 
 async def texts_to_discord_channels(channel_ids):
@@ -70,9 +68,7 @@ async def request_posts(url):
 
 async def formatter(user, prev_time, social_media, channels, settings):
     # get all the avaliable channels
-    all_channels = texts_to_discord_channels(channels)
-    if not all_channels:
-        return {"channels_exist": False, "api_success": "Unknown"}
+    all_channels = channels
 
     platform = social_media.capitalize()
 
@@ -99,7 +95,7 @@ async def formatter(user, prev_time, social_media, channels, settings):
             new_post_str = f"**New post from {user} on {platform}**\n{p['post_URL']}\n"
             video_str = f'Click to view video' if p.get(
                 'post_is_video') else ''
-            channel = bot.get_channel(973770780938743850)
+            channel = bot.get_channel(TESTING_CHANNEL)
             await channel.send(content=f"{new_post_str}{video_str}", embed=embed)
             return {"channels_exist": True, "API Success": True, "api_type": posts_req.get("API"), "data": posts, "time_elapsed": posts_req.get("Time elapsed")}
 
@@ -176,9 +172,6 @@ async def listChannel(ctx):
         return
     embed = discord.Embed(title="Channels", description='\n'.join(
         channels_database.get(ctx.guild.id)), color=1146986)
-
-    embed.set_footer(text="Channels",
-                     icon_url="pictures\icons8-restart.gif")
     await ctx.send(embed=embed)
     await add_reaction(ctx)
 
@@ -191,7 +184,8 @@ async def listChannel_error(ctx, error):
 
 # Social Media Usernames:
 @ bot.command()
-async def add(ctx, social_media: to_lower, user: str):
+async def add(ctx, social_media, user: str):
+    social_media = social_media.lower()
     if not await has_perms(ctx):
         return
 
@@ -227,7 +221,7 @@ async def add_error(ctx, error):
 
 
 @ bot.command()
-async def remove(ctx, social_media: to_lower, user: str):
+async def remove(ctx, social_media: str, user: str):
     if not await has_perms(ctx):
         return
 
@@ -236,7 +230,7 @@ async def remove(ctx, social_media: to_lower, user: str):
         await ctx.send(f"Invalid social media site entered. Available social media platforms are {', '.join(SOCIALS_DATA.keys())}.")
         return
 
-    social_database.remove(ctx.guild.id, user)
+    social_database.remove(ctx.guild.id, social_media, user)
 
     await add_reaction(ctx)
 
@@ -275,46 +269,46 @@ async def list_error(ctx, error):
     await ctx.send(repr(error))
 
 
-@ tasks.loop(minutes=10)  # repeat every 10 minutes
+@ tasks.loop(minutes=45)  # repeat every 10 minutes
 async def main_loop():
-    param_count = 0
+    failed = []
+    start = time.perf_counter()
     await bot.wait_until_ready()
     for server_ids in social_database.all:
         for server_id in server_ids.keys():
+            channels = channels_database.get(server_id)
+            all_channels = await texts_to_discord_channels(channels)
+            if not all_channels and testing == False:
+                continue
             prev_time = time_database.get(server_id)
             socials = social_database.get(server_id)
-            channels = channels_database.get(server_id)
             settings = settings_database.get(server_id)
             for social_media in SOCIALS_DATA.keys():
                 if socials.get(social_media) is None:
                     continue
                 for user in socials[social_media]:
                     params = [user, prev_time,
-                              social_media, channels, settings, server_id]
-                    param_count += 1
-                    print("Params: " + params)
-                    result = await formatter(params[0], params[1], params[2], params[3], params[4])
-                    print("Result: " + result)
-
-                    # print(params, param_count)
-            #         try:
-            #             result = await formatter(params[0], params[1], params[2], params[3], params[4])
-            #             if result.get("channels_exist") is False:
-            #                 print("No channels")
-            #                 return
-            #             if result.get("api_success") is False:
-            #                 print("API Failed", result.get(
-            #                     "api_type"), result.get("data"), result.get("time_elapsed"), user)
-            #                 return
-            #             print(result.get("data"), result.get(
-            #                 "api_type"), result.get("time_elapsed"), user)
-
-            #         except Exception as e:
-            #             print(repr(e))
-            # time_database.add(server_id, int(time.time()))
-
+                              social_media, all_channels, settings, server_id]
+                    print(
+                        f"Server: {server_id} Channels: {channels} Settings: {settings}\nUsername: {user} on {social_media}")
+                    try:
+                        result = await formatter(params[0], params[1], params[2], params[3], params[4])
+                        if result.get("api_success") is False:
+                            print("API FAILED!!!\n" + str(result) + "\n")
+                            failed.append(params)
+                            continue
+                    except Exception as e:
+                        result = {"channels_exist": False, "api_success": False,
+                                  "api_type": "ERROR", "data": repr(e), "time_elapsed": "ERROR"}
+                    print("Result: " + str(result) + "\n")
+            time_database.add(server_id, int(time.time()))
+    finish = time.perf_counter()
+    print(
+        f"\n\n\nThis loop took: {round(finish - start, 2)} seconds which is around {round(finish - start, 2)//60} minutes")
+    print(failed)
+    with open("failed.txt", "w") as output:
+        output.write(str(failed))
 
 if __name__ == '__main__':
     main_loop.start()
     bot.run(os.getenv('DISCORD_TOKEN'))
-    pass

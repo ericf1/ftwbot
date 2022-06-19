@@ -6,7 +6,7 @@ async def get_latest_instagram_post(username, prev_fetch_time):
     profile_data = dict()
     all_data = []
     try:
-        await asyncio.sleep(1)
+        # await asyncio.sleep(1)
         async with aiohttp.ClientSession() as session:
             api_url = f"https://www.instagram.com/{username}/feed/?__a=1"
             async with session.get(api_url) as resp:
@@ -50,7 +50,7 @@ async def get_latest_instagram_post(username, prev_fetch_time):
 
 
 async def check_instagram_user(username):
-    await asyncio.sleep(1)
+    # await asyncio.sleep(1)
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(f"https://www.instagram.com/{username}/feed/?__a=1") as resp:

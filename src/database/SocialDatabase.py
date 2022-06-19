@@ -25,21 +25,24 @@ class SocialDatabase(Database):
         if not server_id in all_keys:
             self.data.json().set(server_id, Path.root_path(), {})
 
-    def get(self, server_id):
+    def get(self, server_id: int):
+        server_id = str(server_id)
         self.check(server_id)
         return self.data.json().get(server_id)
 
-    def add(self, server_id: str, social_media, username):
+    def add(self, server_id: int, social_media, username):
+        server_id = str(server_id)
         self.check(server_id)
         original_data = self.data.json().get(server_id)
         if social_media not in original_data:
             original_data[social_media] = []
-        # if username in original_data[social_media]:
-        #     raise ValueError("User is already in database")
+        if username in original_data[social_media]:
+            raise ValueError("User is already in database")
         original_data[social_media].append(username)
         self.data.json().set(server_id, Path.root_path(), original_data)
 
-    def remove(self, server_id: str, social_media, username):
+    def remove(self, server_id: int, social_media, username):
+        server_id = str(server_id)
         original_data = self.data.json().get(server_id)
         if original_data is None:
             raise KeyError("No such server exists")
