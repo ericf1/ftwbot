@@ -1,3 +1,7 @@
+# Announcements
+
+Instagram is currently still not working. There will be a massive update tomorrow night that will resolve this issue hopefully permenantly.
+
 # FTWBot
 
 <!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem> -->
@@ -5,7 +9,7 @@
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 100 servers and are in the process of getting verified as an official Discord bot!
+We are currently supporting over 196 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
@@ -59,8 +63,27 @@ git clone https://github.com/ericf1/ftwbot.git
 ```
 or through downloading the source code that is avaliable in the [versions](https://github.com/ericf1/ftwbot/releases)
 
->Create a .env file containing the following inside of the src folder:
-You will need a personal Discord Token, Twitter API Key, and Twitter Access Token
+>Install the necessary libraries by running:
+```
+pip3 install -r requirements.txt
+```
+
+>Change directories to the python code files with:
+```
+cd src
+```
+
+>Create a .env file containing the following inside of the src folder with vim or your favorite text editor:
+```
+vim .env
+```
+
+>To start inserting with vim, you need to write:
+```
+i
+```
+
+>You will need a personal Discord Token, Twitter API Key, and Twitter Access Token. Your .env file should be formatted like this:
 ```
 TWITTER_API_KEY=
 TWITTER_API_SECRET_KEY=
@@ -70,9 +93,9 @@ DISCORD_TOKEN=
 ```
 You can find these keys from the [Twitter Developer Portal](https://developer.twitter.com/en/portal/petition/essential/basic-info) and [Discord Developer Portal](https://discord.com/developers/docs/intro)
 
->Install the necessary libraries by running:
+>In vim, to save and exit, execute:
 ```
-pip3 install -r requirements.txt
+:wq
 ```
 
 >Start the bot with:
@@ -80,7 +103,7 @@ pip3 install -r requirements.txt
 python3 bot.py
 ```
 
-Our Python code is currently set to check for new posts every two minutes (this can be changed in under the parameter of the mainLoop).
+Our Python code is currently set to check for new posts every ten minutes (this can be changed in under the parameter of the mainLoop).
 
 In order to constantly maintain the bot, we recommend running the Python script through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). We currently run an instance of ubuntu through AWS. 
 

@@ -123,6 +123,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
+
 # ping will respond pong to ensure that the bot is alive
 @ bot.command()
 async def ping(ctx):
