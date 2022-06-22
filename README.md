@@ -21,6 +21,9 @@ Click on the link and authenticate:
 If the first link is full:
 [Second Link](https://discord.com/api/oauth2/authorize?client_id=978880834440429578&permissions=277025474624&scope=bot)
 
+If the second link is full:
+[Third Link](https://discord.com/api/oauth2/authorize?client_id=989295540938362890&permissions=277025474624&scope=bot)
+
 Features
 ---
 - Easy to run
@@ -34,17 +37,12 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|---------|
 | addChannel | ``{#channel}`` | Adds a channel for the bot to post in | ``s!addChannel #general``|
-| listChannel | None | Displays a list of the channel IDs (next update will change into readable channels) that the bot is going to post in | ``s!listChannell``|
+| listChannel | None | Displays a list of the channels with their IDs that the bot is going to post in | ``s!listChannell``|
 | removeChannel | ``{#channel}`` | Removes the selected channel from the list of channels to be sent | ``s!removeChannel #general``|
 | list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
 | ping | None | Pong | ``s!ping`` |
-
-Note
----
-If you don't know what channel is on your list, this link shows you how to access your channel ids:
-https://turbofuture.com/internet/Discord-Channel-ID
 
 Requirements!
 ---
