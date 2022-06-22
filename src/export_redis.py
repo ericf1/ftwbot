@@ -2,6 +2,7 @@ from database.ChannelsDatabase import ChannelsDatabase
 from database.SocialDatabase import SocialDatabase
 from database.TimeDatabase import TimeDatabase
 from database.SettingsDatabase import SettingsDatabase
+import json
 
 
 def export_redis():
@@ -36,7 +37,9 @@ def export_redis():
                 exported_json[key] = {}
             exported_json[key].update({"channel_ids": value})
 
-    print(exported_json['807956982274588693'])
+    dumped_json = json.dumps(exported_json, indent=4)
+    with open("new_database.json", "w") as outfile:
+        outfile.write(dumped_json)
 
 
 if __name__ == "__main__":

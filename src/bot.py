@@ -26,7 +26,7 @@ channels_database = ChannelsDatabase(3)
 SERVER_API = os.getenv("API_SERVER")
 bot = commands.Bot(command_prefix='s!', case_insensitive=True)
 http = requests.Session()
-testing = True
+testing = False
 TESTING_CHANNEL = os.getenv("TESTING_CHANNEL")
 
 # Helper functions
@@ -123,7 +123,6 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
 
 
-
 # ping will respond pong to ensure that the bot is alive
 @ bot.command()
 async def ping(ctx):
@@ -171,8 +170,14 @@ async def removeChannel_error(ctx, error):
 async def listChannel(ctx):
     if not await has_perms(ctx):
         return
+    channels_from_db = []
+    for channel_id in channels_database.get(ctx.guild.id):
+        channel_resp = bot.get_channel(int(channel_id))
+        if channel_resp:
+            channels_from_db.append(f"#{channel_resp.name} ID:{channel_id}")
+
     embed = discord.Embed(title="Channels", description='\n'.join(
-        channels_database.get(ctx.guild.id)), color=1146986)
+        channels_from_db), color=1146986)
     await ctx.send(embed=embed)
     await add_reaction(ctx)
 
@@ -270,7 +275,7 @@ async def list_error(ctx, error):
     await ctx.send(repr(error))
 
 
-@ tasks.loop(minutes=45)  # repeat every 10 minutes
+@ tasks.loop(minutes=28)  # repeat every 10 minutes
 async def main_loop():
     failed = []
     start = time.perf_counter()
@@ -304,11 +309,11 @@ async def main_loop():
                     print("Result: " + str(result) + "\n")
             time_database.add(server_id, int(time.time()))
     finish = time.perf_counter()
-    print(
-        f"\n\n\nThis loop took: {round(finish - start, 2)} seconds which is around {round(finish - start, 2)//60} minutes")
-    print(failed)
+    failed_meta = f"\n\n\nThis loop took: {round(finish - start, 2)} seconds which is around {round(finish - start, 2)//60} minutes\n\n\n"
+    failed_info = failed_meta + str(failed)
+    print(failed_info)
     with open("failed.txt", "w") as output:
-        output.write(str(failed))
+        output.write(failed_info)
 
 if __name__ == '__main__':
     main_loop.start()
