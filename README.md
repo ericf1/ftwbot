@@ -47,7 +47,7 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 Requirements!
 ---
 
-- **For posts to send you must have a channel set first with s!setChannel**
+- **For posts to send you must have a channel add first with s!addChannel**
 
 - **You also must ensure that the bot has permission to write in that channel or it will not be able to post!**
 
@@ -62,11 +62,8 @@ Suggestions are appreciated and can be posted to the [Discussions](https://githu
 
 How To Set Up Your Own Bot From Your Personal Machine
 ---
->First, fetch our code base through git clone:
-```
-git clone https://github.com/ericf1/ftwbot.git
-```
-or through downloading the source code that is avaliable in the [versions](https://github.com/ericf1/ftwbot/releases)
+>First, download the v0.1.3 code base:
+[versions](https://github.com/ericf1/ftwbot/releases)
 
 >Install the necessary libraries by running:
 ```
