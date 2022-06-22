@@ -1,8 +1,6 @@
 # Announcements
 
-The bots should be working. We will be shipping out a new version of the database and the api soon (next 1-3 days) which should make everything run more smoothly.
-
-We will also release a third FTW Bot soon (next 1-2 days). 
+The commands have been changed and now posts can be announced inside of multiple channels!
 
 # FTWBot
 
@@ -35,8 +33,10 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|---------|
-| setChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!setChannel #general``|
-| list | None | Displays a list of all of the social media accounts being tracked | ``s!list``|
+| addChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!addChannel #general``|
+| listChannel | None | Displays a list of the social media accounts being tracked | ``s!listChannell``|
+| removeChannel | ``{#channel}`` | Removes the selected channel from the list of channels to be sent | ``s!removeChannel #general``|
+| list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
 | ping | None | Pong | ``s!ping`` |
