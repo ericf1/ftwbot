@@ -1,6 +1,6 @@
 # Announcements
 
-The bots should be working. We will be shipping out a new version of the database and the api soon (next 1-3 days) which should make everything run more smoothly.
+The commands have been changed and now posts can be announced inside of multiple channels!
 
 # FTWBot
 
@@ -9,7 +9,7 @@ The bots should be working. We will be shipping out a new version of the databas
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 196 servers!
+We are currently supporting 200 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
@@ -20,6 +20,9 @@ Click on the link and authenticate:
 
 If the first link is full:
 [Second Link](https://discord.com/api/oauth2/authorize?client_id=978880834440429578&permissions=277025474624&scope=bot)
+
+If the second link is full:
+[Third Link](https://discord.com/api/oauth2/authorize?client_id=989295540938362890&permissions=277025474624&scope=bot)
 
 Features
 ---
@@ -33,8 +36,10 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|---------|
-| setChannel | ``{#channel}`` | Sets the channel the bot posts in | ``s!setChannel #general``|
-| list | None | Displays a list of all of the social media accounts being tracked | ``s!list``|
+| addChannel | ``{#channel}`` | Adds a channel for the bot to post in | ``s!addChannel #general``|
+| listChannel | None | Displays a list of the channels with their IDs that the bot is going to post in | ``s!listChannell``|
+| removeChannel | ``{#channel}`` | Removes the selected channel from the list of channels to be sent | ``s!removeChannel #general``|
+| list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
 | ping | None | Pong | ``s!ping`` |
@@ -42,7 +47,7 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 Requirements!
 ---
 
-- **For posts to send you must have a channel set first with s!setChannel**
+- **For posts to send you must have a channel add first with s!addChannel**
 
 - **You also must ensure that the bot has permission to write in that channel or it will not be able to post!**
 
@@ -57,11 +62,8 @@ Suggestions are appreciated and can be posted to the [Discussions](https://githu
 
 How To Set Up Your Own Bot From Your Personal Machine
 ---
->First, fetch our code base through git clone:
-```
-git clone https://github.com/ericf1/ftwbot.git
-```
-or through downloading the source code that is avaliable in the [versions](https://github.com/ericf1/ftwbot/releases)
+>First, download the v0.1.3 code base:
+[versions](https://github.com/ericf1/ftwbot/releases)
 
 >Install the necessary libraries by running:
 ```
