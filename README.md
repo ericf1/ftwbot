@@ -109,7 +109,7 @@ You can find these keys from the [Twitter Developer Portal](https://developer.tw
 python3 bot.py
 ```
 
-Our Python code is currently set to check for new posts every ten minutes (this can be changed in under the parameter of the mainLoop).
+Change the main_loop function's decorator argument in order to edit the time which you request to see if there are any new posts.
 
 In order to constantly maintain the bot, we recommend running the Python script through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). We currently run an instance of ubuntu through AWS. 
 
