@@ -4,7 +4,7 @@ The commands have been changed and now posts can be announced inside of multiple
 
 There is also a strong solution applied to resolve the past Instagram API issues. 
 
-If you have any issues, feel free to raise it in the issues section of the repo, DM me (@humaneach1#7577) or email me (ericfang1935@gmail.com).
+If you have any issues, feel free to raise it in the [issues section](https://github.com/ericf1/ftwbot/issues) of the repo, DM me (@humaneach1#7577) or email me (ericfang1935@gmail.com).
 
 # FTWBot
 
