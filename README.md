@@ -1,6 +1,6 @@
 # Announcements
 
-The commands have been changed and now posts can be announced inside of multiple channels!
+The commands have been changed and now posts can be announced inside of multiple channels! There is also a strong solution applied to resolve the Instagram API issues that have been going on. If anyone has any issues, feel free to DM me (@humaneach1#7577) or email me (ericfang1935@gmail.com).
 
 # FTWBot
 
