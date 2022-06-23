@@ -13,7 +13,7 @@ If anyone has any issues, feel free to DM me (@humaneach1#7577) or email me (eri
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting 200 servers!
+We are currently supporting over 200 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
