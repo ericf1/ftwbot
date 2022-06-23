@@ -56,21 +56,21 @@ async def get_latest_twitter_post(username, prev_fetch_time):
                     all_data.append({**profile_data, **data})
     except Exception as e:
         print(repr(e))
-        return {"data": repr(e), "success":False, "API":"Twitter", "username":username, "prev_time":prev_fetch_time}
-    return {"data": all_data, "success":True, "API":"Twitter", "username":username, "prev_time":prev_fetch_time}
+        return {"data": repr(e), "success": False, "API": "Twitter", "username": username, "prev_time": prev_fetch_time}
+    return {"data": all_data, "success": True, "API": "Twitter", "username": username, "prev_time": prev_fetch_time}
 
 
 async def check_twitter_user(username):
     try:
-        await api.get_user(screen_name=username)
-        return {"data": True, "success": True, "API":"Twitter", "username":username}
+        api.get_user(screen_name=username)
+        return {"data": True, "success": True, "API": "Twitter", "username": username}
     except:
-        return {"data": False, "success": True, "API":"Twitter", "username":username}
+        return {"data": False, "success": True, "API": "Twitter", "username": username}
 
 
 async def main():
     start = time.perf_counter()
-    posts = await get_latest_twitter_post('elonmusk', 1)
+    posts = await check_twitter_user('wdadafefafeaf')
     print(posts)
     finish = time.perf_counter()
 
