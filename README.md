@@ -32,7 +32,7 @@ Features
 ---
 - Notify your server about Instagram posts and tweets from yourself or your favorite influencers!
 - Easy and intitutive set up and constant support. Just set it and forget it!
-- 24/7 runtime with on cloud servers!
+- 24/7 runtime on cloud servers!
 
 Commands
 ---
