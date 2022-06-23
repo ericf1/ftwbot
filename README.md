@@ -10,9 +10,9 @@ If you have any issues, feel free to raise it in the [issues section](https://gi
 
 <!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=200rem height=200rem> -->
 <div display="flex" flex-direction="column">
-  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftw%20logo.png" width=225rem height=225rem>
-  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwbot2.png" width=225rem height=225rem>
-  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwlogo3.png" width=225rem height=225rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftw%20logo.png" width=250rem height=250rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwbot2.png" width=250rem height=250rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwlogo3.png" width=250rem height=250rem>
 </div>
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
