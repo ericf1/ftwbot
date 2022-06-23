@@ -36,7 +36,7 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|---------|
-| addChannel | ``{#channel}`` | Adds a channel for the bot to post in | ``s!addChannel #general``|
+| addChannel | ``{#channel} or None`` | Adds a channel for the bot to post in (no arguments means that it will add the channel where you wrote the command) | ``s!addChannel``|
 | listChannel | None | Displays a list of the channels with their IDs that the bot is going to post in | ``s!listChannell``|
 | removeChannel | ``{#channel}`` | Removes the selected channel from the list of channels to be sent | ``s!removeChannel #general``|
 | list | None | Displays a list of the social media accounts being tracked | ``s!list``|
