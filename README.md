@@ -39,8 +39,8 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All
 | addChannel | ``{#channel} or None`` | Adds a channel for the bot to post in (no arguments means that it will add the channel where you wrote the command) | ``s!addChannel``|
 | listChannel | None | Displays a list of the channels with their IDs that the bot is going to post in | ``s!listChannell``|
 | removeChannel | ``{#channel}`` | Removes the selected channel from the list of channels to be sent | ``s!removeChannel #general``|
-| list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
+| list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
 | ping | None | Pong | ``s!ping`` |
 
@@ -55,7 +55,7 @@ Future
 ---
 - Implementing Reddit and YouTube APIs
 - Creating custom web links for Discord webhooks
-- Implementing Redis Database
+- Having settings to edit how the messages are formatted
 
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
