@@ -1,15 +1,23 @@
 # Announcements
 
-The commands have been changed and now posts can be announced inside of multiple channels!
+The commands have been changed and now posts can be announced inside of multiple channels! 
+
+There is also a strong solution applied to resolve the past Instagram API issues. 
+
+If you have any issues, feel free to raise it in the [issues section](https://github.com/ericf1/ftwbot/issues) of the repo, DM me (@humaneach1#7577) or email me (ericfang1935@gmail.com).
 
 # FTWBot
 
-<!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=300rem height=300rem> -->
-<img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftw%20logo.png" width=300rem height=300rem>
+<!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=200rem height=200rem> -->
+<div display="flex" flex-direction="column">
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftw%20logo.png" width=250rem height=250rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwbot2.png" width=250rem height=250rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwlogo3.png" width=250rem height=250rem>
+</div>
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting 200 servers!
+We are currently supporting over 200 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
@@ -26,21 +34,21 @@ If the second link is full:
 
 Features
 ---
-- Easy to run
-- Constant uptime
-- Supports both Instagram and Twitter
+- Notify your server about Instagram posts and tweets from yourself or your favorite influencers!
+- Easy and intitutive set up and constant support. Just set it and forget it!
+- 24/7 runtime on cloud servers!
 
 Commands
 ---
-FTWBot's prefix is ``s!``, add it to the start of any of this bot's command. All of the commands are case-sensitive.
+FTWBot's prefix is ``s!``, add it to the start of any of this bot's command.
 
 | Command | Arguments | Description | Example |
 |---------|-----------|-------------|---------|
 | addChannel | ``{#channel} or None`` | Adds a channel for the bot to post in (no arguments means that it will add the channel where you wrote the command) | ``s!addChannel``|
-| listChannel | None | Displays a list of the channels with their IDs that the bot is going to post in | ``s!listChannell``|
+| listChannel | None | Displays a list of the channels with their IDs that the bot is going to post in | ``s!listChannel``|
 | removeChannel | ``{#channel}`` | Removes the selected channel from the list of channels to be sent | ``s!removeChannel #general``|
-| list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
+| list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
 | ping | None | Pong | ``s!ping`` |
 
@@ -55,7 +63,7 @@ Future
 ---
 - Implementing Reddit and YouTube APIs
 - Creating custom web links for Discord webhooks
-- Implementing Redis Database
+- Having settings to edit how the messages are formatted
 
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
@@ -105,7 +113,7 @@ You can find these keys from the [Twitter Developer Portal](https://developer.tw
 python3 bot.py
 ```
 
-Our Python code is currently set to check for new posts every ten minutes (this can be changed in under the parameter of the mainLoop).
+Change the main_loop function's decorator argument in order to edit the time which you request to see if there are any new posts.
 
 In order to constantly maintain the bot, we recommend running the Python script through a Cloud Hosting Service such as [Amazon Web Service](https://aws.amazon.com/). We currently run an instance of ubuntu through AWS. 
 
