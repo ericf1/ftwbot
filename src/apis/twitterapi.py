@@ -23,7 +23,7 @@ async def sleep_async(username):
     return await loop.run_in_executor(None, partial(api_request, username))
 
 
-async def get_latest_twitter_post(username, prev_fetch_time):
+async def get_latest_twitter_post(username: str, prev_fetch_time: int) -> dict:
     profile_data = dict()
     all_data = []
     try:
@@ -60,7 +60,7 @@ async def get_latest_twitter_post(username, prev_fetch_time):
     return {"data": all_data, "success": True, "API": "Twitter", "username": username, "prev_time": prev_fetch_time}
 
 
-async def check_twitter_user(username):
+async def check_twitter_user(username: str) -> dict:
     try:
         api.get_user(screen_name=username)
         return {"data": True, "success": True, "API": "Twitter", "username": username}

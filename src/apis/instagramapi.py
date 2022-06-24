@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 
 
-async def get_latest_instagram_post(username, prev_fetch_time):
+async def get_latest_instagram_post(username: str, prev_fetch_time: int) -> dict:
     profile_data = dict()
     all_data = []
     try:
@@ -49,7 +49,7 @@ async def get_latest_instagram_post(username, prev_fetch_time):
     return {"data": all_data, "success": True, "API": "Instagram", "username": username, "prev_time": prev_fetch_time}
 
 
-async def check_instagram_user(username):
+async def check_instagram_user(username: str) -> dict:
     # await asyncio.sleep(1)
     try:
         async with aiohttp.ClientSession() as session:
