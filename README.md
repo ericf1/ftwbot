@@ -70,7 +70,7 @@ Suggestions are appreciated and can be posted to the [Discussions](https://githu
 
 How To Set Up Your Own Bot From Your Personal Machine
 ---
->First, download the v0.1.3 code base:
+>First, download the v0.1.3 code base. This version is supposed by TinyDB:
 [versions](https://github.com/ericf1/ftwbot/releases)
 
 >Install the necessary libraries by running:
