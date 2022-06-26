@@ -1,10 +1,8 @@
 # Announcements
 
-The commands have been changed and now posts can be announced inside of multiple channels! 
+The bot is currently down for maintance for a few hours.
 
-There is also a strong solution applied to resolve the past Instagram API issues. 
-
-If you have any issues, feel free to raise it in the [issues section](https://github.com/ericf1/ftwbot/issues) of the repo, DM me (@humaneach1#7577) or email me (ericfang1935@gmail.com).
+I have made a support discord server! Join for more updates about the bot. https://discord.gg/Wu8wYvrSx4
 
 # FTWBot
 
