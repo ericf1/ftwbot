@@ -1,8 +1,6 @@
 # Announcements
 
-The bot is currently down for maintance for a few hours.
-
-I have made a support discord server! Join for more updates about the bot. https://discord.gg/Wu8wYvrSx4
+Join for our support server for updates about the bot and to keep track of when it goes down! https://discord.gg/Wu8wYvrSx4
 
 # FTWBot
 
