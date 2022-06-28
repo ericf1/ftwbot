@@ -1,7 +1,7 @@
 from .Database import Database
 import redis
 from redis.commands.json.path import Path
-from ._supported_settings import SUPPORTED_SETTINGS_DATA, DEFAULT_SETTINGS_DATA
+from data import SUPPORTED_SETTINGS_DATA, DEFAULT_SETTINGS_DATA
 
 
 class SettingsDatabase(Database):
@@ -12,7 +12,7 @@ class SettingsDatabase(Database):
 
     def __repr__(self):
         # return {{key.decode('utf-8'): self.data.json().get(key.decode('utf-8'))} for key in self.social_data.scan_iter()}
-        return str(self.all())
+        return str(self.all)
 
     @property
     def all(self):
@@ -25,18 +25,18 @@ class SettingsDatabase(Database):
     def get(self, server_id):
         self.check(server_id)
         return self.data.json().get(server_id)
-    
+
     def check(self, server_id: str):
         all_keys = [key.decode('utf-8') for key in self.data.scan_iter()]
-        if not server_id in all_keys:
+        if not str(server_id) in all_keys:
             self.data.json().set(server_id, Path.root_path(), DEFAULT_SETTINGS_DATA)
 
     # This is more like "update"
-    def add(self, server_id, **kwargs):
+    def add(self, server_id, arg: dict):
         self.check(server_id)
         original_data = self.get(server_id)
-        for key, value in kwargs.items():
-            if key in SUPPORTED_SETTINGS_DATA and value in SUPPORTED_SETTINGS_DATA[key]:
+        for key, value in arg.items():
+            if key in SUPPORTED_SETTINGS_DATA:
                 original_data[key] = value
             else:
                 raise KeyError("Unsupported setting")

@@ -5,7 +5,6 @@ from database.SettingsDatabase import SettingsDatabase
 import unittest
 import random
 import redis
-from redis.commands.json.path import Path
 import time
 
 

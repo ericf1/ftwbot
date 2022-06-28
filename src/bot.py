@@ -1,19 +1,13 @@
-from datetime import datetime, timezone
-import time
-from _social_data import SOCIALS_DATA
 import aiohttp
-
-from dotenv import load_dotenv
+import time
 import requests
 import os
-
-from discord.ext import commands, tasks
 import discord
-
-from database.ChannelsDatabase import ChannelsDatabase
-from database.SocialDatabase import SocialDatabase
-from database.TimeDatabase import TimeDatabase
-from database.SettingsDatabase import SettingsDatabase
+from discord.ext import commands, tasks
+from datetime import datetime, timezone
+from data import SOCIALS_DATA, SUPPORTED_SETTINGS_DATA, DEFAULT_SETTINGS_DATA
+from dotenv import load_dotenv
+from database import ChannelsDatabase, SocialDatabase, TimeDatabase, SettingsDatabase
 
 
 # Necessary functional commands
@@ -80,7 +74,7 @@ async def formatter(user, prev_time, social_media, channels, settings):
     posts = posts_req.get("data")
     if posts == [] or posts is None:
         return {"channels_exist": True, "api_success": True, "api_type": posts_req.get("API"), "data": posts, "time_elapsed": posts_req.get("Time elapsed")}
-
+    print(posts)
     for p in posts:
         embed = discord.Embed(
             description=p["post_text"], color=SOCIALS_DATA[social_media]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
@@ -92,8 +86,8 @@ async def formatter(user, prev_time, social_media, channels, settings):
             embed.set_image(url=p["post_media_URL"])
 
         if testing is True:
-            new_post_str = f"**New post from {user} on {platform}**\n{p['post_URL']}\n"
-            video_str = f'Click to view video' if p.get(
+            new_post_str = f"{settings['announcement_msg_for_post'].format(user=user, platform=platform)}\n{p['post_URL']}\n"
+            video_str = f"{settings['announcement_msg_for_video']}" if p.get(
                 'post_is_video') else ''
             channel = bot.get_channel(TESTING_CHANNEL)
             await channel.send(content=f"{new_post_str}{video_str}", embed=embed)
@@ -102,15 +96,10 @@ async def formatter(user, prev_time, social_media, channels, settings):
         for channel in all_channels:
             if channel is None:
                 continue
-            new_post_str = f"**New post from {user} on {platform}**\n{p['post_URL']}\n"
-            video_str = f'Click to view video' if p.get(
+            new_post_str = f"{settings['announcement_msg_for_post'].format(user=user, platform=platform)}\n{p['post_URL']}\n"
+            video_str = f"{settings['announcement_msg_for_video']}" if p.get(
                 'post_is_video') else ''
-            if settings.get("language") == "Spanish":
-                new_post_str = f"**Nuevo contenido de {user} en {platform}**\n{p['post_URL']}\n"
-                video_str = f'Haga clic para ver el vídeo' if p.get(
-                    'post_is_video') else ''
             if settings.get("send_video_as_link") == "Yes" and p.get('post_is_video'):
-                video_str = ""
                 await channel.send(content=f"{new_post_str}{video_str}")
                 continue
             await channel.send(content=f"{new_post_str}{video_str}", embed=embed)
@@ -147,7 +136,7 @@ async def addChannel(ctx, channel: discord.TextChannel = None):
 @ addChannel.error
 async def addChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
-        await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
+        await ctx.send("Incorrect usage of command: `s!addChannel #{text-channel}`")
 
 
 @ bot.command()
@@ -163,7 +152,7 @@ async def removeChannel(ctx, channel: discord.TextChannel = None):
 @ removeChannel.error
 async def removeChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
-        await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
+        await ctx.send("Incorrect usage of command: `s!removeChannel #{text-channel}`")
 
 
 @ bot.command()
@@ -185,7 +174,7 @@ async def listChannel(ctx):
 @ listChannel.error
 async def listChannel_error(ctx, error):
     if isinstance(error, commands.ArgumentParsingError):
-        await ctx.send("Incorrect usage of command: `s!setChannel #{text-channel}`")
+        await ctx.send("Incorrect usage of command: `s!listChannel`")
 
 
 # Social Media Usernames:
@@ -270,12 +259,113 @@ async def list(ctx):
 @ list.error
 async def list_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
-        await ctx.send("Incorrect usage of command: `s!remove {social-media-site} {username}`")
+        await ctx.send("Incorrect usage of command: `s!list`")
         return
     await ctx.send(repr(error))
 
 
-@ tasks.loop(minutes=28)  # repeat every 10 minutes
+@ bot.command()
+async def settings(ctx):
+    if not await has_perms(ctx):
+        return
+    server_settings = settings_database.get(ctx.guild.id)
+
+    list_of_set_settings = []
+    for setting_avaliable, your_setting in server_settings.items():
+        your_setting_str = f"{setting_avaliable}: {your_setting}"
+        list_of_set_settings.append(your_setting_str)
+
+    if list_of_set_settings is []:
+        return
+    embed = discord.Embed(
+        title="Your Settings", description='\n'.join(list_of_set_settings), color=1146986)
+    embed.set_footer(text="FTWBot")
+
+    await ctx.send(embed=embed)
+
+    await add_reaction(ctx)
+
+
+@ settings.error
+async def settings_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!settings`")
+        return
+    await ctx.send(repr(error))
+
+
+def check_stop(stop: str):
+    if stop == "quit":
+        return True
+    return False
+
+
+@ bot.command()
+async def setSettings(ctx, setting: str, default: str = None):
+    if not await has_perms(ctx):
+        return
+
+    if not setting in SUPPORTED_SETTINGS_DATA.keys():
+        raise commands.ArgumentParsingError
+
+    if isinstance(default, str) and default != "default":
+        raise commands.ArgumentParsingError
+
+    if default == "default":
+        await ctx.send(f"{setting} is now set to:")
+        await ctx.send(f"`{DEFAULT_SETTINGS_DATA[setting]}`")
+        arg = {setting: DEFAULT_SETTINGS_DATA[setting]}
+        settings_database.add(ctx.guild.id, arg)
+        return
+
+    def check(msg):
+        return msg.channel == ctx.channel and msg.author == ctx.author
+
+    server_settings = settings_database.get(ctx.guild.id)
+
+    await ctx.send(f"Your current settings are: {server_settings[setting]}")
+    await ctx.send(f"What would you like to update the {setting} to? (Type it below). Type `quit` to quit.")
+    await ctx.send(SUPPORTED_SETTINGS_DATA[setting]['tips'])
+    if SUPPORTED_SETTINGS_DATA[setting]["content"] != "any_string":
+        await ctx.send(f"You can choose between `{', '.join(SUPPORTED_SETTINGS_DATA[setting]['content'])}`")
+
+    updated_setting = await bot.wait_for('message', timeout=60, check=check)
+
+    if check_stop(updated_setting.content):
+        await ctx.send("Exiting... To restart, rerun the command")
+        return
+
+    if SUPPORTED_SETTINGS_DATA[setting]["content"] != "any_string" and not updated_setting.content in SUPPORTED_SETTINGS_DATA[setting]["content"]:
+        raise commands.MissingRequiredArgument
+
+    await ctx.send(updated_setting.content)
+    msg_confirm = await ctx.send(SUPPORTED_SETTINGS_DATA[setting]['question'])
+    await msg_confirm.add_reaction('👍')
+    await msg_confirm.add_reaction('👎')
+    reaction, user = await bot.wait_for('reaction_add', timeout=60,
+                                        check=lambda reaction, user: (reaction.emoji == '👍' or reaction.emoji == '👎') and user == ctx.author)
+    if reaction.emoji == '👎':
+        await ctx.send("Exiting... To restart, rerun the command")
+        return
+    await ctx.send("Perfect! You can now view your changes with s!settings")
+    arg = {setting: updated_setting.content}
+    settings_database.add(ctx.guild.id, arg)
+
+    await add_reaction(ctx)
+
+
+@ setSettings.error
+async def setSettings_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!setSettings`. Setting is not supported. View s!settings to see supported settings or consult our GitHub")
+        return
+    if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        await ctx.send("Message request was timed out. Try again if you want to update your settings.")
+        return
+    await ctx.send(repr(error))
+
+
+@ tasks.loop(minutes=35)  # repeats every n minutes
 async def main_loop():
     failed = []
     start = time.perf_counter()
@@ -306,6 +396,9 @@ async def main_loop():
                     except Exception as e:
                         result = {"channels_exist": False, "api_success": False,
                                   "api_type": "ERROR", "data": repr(e), "time_elapsed": "ERROR"}
+                        print("API FAILED!!!" + str(result) + "\n")
+                        failed.append(params)
+                        continue
                     print("Result: " + str(result) + "\n")
             time_database.add(server_id, int(time.time()))
     finish = time.perf_counter()

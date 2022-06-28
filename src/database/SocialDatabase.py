@@ -38,6 +38,8 @@ class SocialDatabase(Database):
             original_data[social_media] = []
         if username in original_data[social_media]:
             raise ValueError("User is already in database")
+        if len(original_data[social_media] + 1) > 8:
+            raise ValueError("You have too many users (maximum is 8)")
         original_data[social_media].append(username)
         self.data.json().set(server_id, Path.root_path(), original_data)
 
