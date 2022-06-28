@@ -40,7 +40,7 @@ async def get_latest_instagram_post(username: str, prev_fetch_time: int) -> dict
                         print(repr(e), post_data)
 
         get_post_data(image_posts_data)
-        get_post_data(video_posts_data)
+        # get_post_data(video_posts_data)
 
     except Exception as e:
         print(repr(e))
