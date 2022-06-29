@@ -13,7 +13,7 @@ Join for our support server for updates about the bot and to keep track of when 
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 200 servers!
+We are currently supporting over 250 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
