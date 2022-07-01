@@ -1,8 +1,6 @@
 # Announcements
 
-The bot is currently down for maintance for a few hours.
-
-I have made a support discord server! Join for more updates about the bot. https://discord.gg/Wu8wYvrSx4
+Join for our support server for updates about the bot! https://discord.gg/Wu8wYvrSx4
 
 # FTWBot
 
@@ -15,7 +13,7 @@ I have made a support discord server! Join for more updates about the bot. https
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 200 servers!
+We are currently supporting over 250 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
@@ -48,6 +46,8 @@ FTWBot's prefix is ``s!``, add it to the start of any of this bot's command.
 | add |``{social-media-platform} {username}`` | Adds a social media account to the list of accounts being tracked | ``s!add twitter lsxyz9`` | 
 | list | None | Displays a list of the social media accounts being tracked | ``s!list``|
 | remove | ``{social-media-platform} {username}`` | Removes a social media account from the list of accounts being tracked | ``s!remove twitter Cloud9``|
+| settings | ``None`` | Lists the avaliable settings to change | ``s!settings``|
+| setSettings | ``{setting}`` or ``{setting} default`` | Follow a series of prompts to update your selected setting. Default parameter will give you back the default setting. | ``s!setSettings announcement_msg_for_post``|
 | ping | None | Pong | ``s!ping`` |
 
 Requirements!
@@ -64,11 +64,11 @@ Future
 - Having settings to edit how the messages are formatted
 
 
-Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
+Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page or in our Discord Server.
 
 How To Set Up Your Own Bot From Your Personal Machine
 ---
->First, download the v0.1.3 code base. This version is supposed by TinyDB:
+>First, download the v0.1.3 code base. This version is supported by TinyDB which can run on local machines:
 [versions](https://github.com/ericf1/ftwbot/releases)
 
 >Install the necessary libraries by running:
