@@ -64,7 +64,7 @@ Future
 - Having settings to edit how the messages are formatted
 
 
-Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page.
+Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page or in our Discord Server.
 
 How To Set Up Your Own Bot From Your Personal Machine
 ---
