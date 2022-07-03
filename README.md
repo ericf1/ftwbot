@@ -1,6 +1,6 @@
 # Announcements
 
-Join for our support server for updates about the bot! https://discord.gg/Wu8wYvrSx4
+Join for our support server for updates about the bot! [Invite](https://discord.gg/Wu8wYvrSx4)
 
 # FTWBot
 
