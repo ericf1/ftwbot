@@ -28,6 +28,9 @@ If the first link is full:
 If the second link is full:
 [Third Link](https://discord.com/api/oauth2/authorize?client_id=989295540938362890&permissions=277025474624&scope=bot)
 
+If the third link is full:
+[Fourth Link](https://discord.com/api/oauth2/authorize?client_id=995839397150863360&permissions=277025474624&scope=bot)
+
 Features
 ---
 - Notify your server about Instagram posts and tweets from yourself or your favorite influencers!
