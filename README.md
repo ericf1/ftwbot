@@ -66,6 +66,7 @@ Future
 - Implementing Reddit and YouTube APIs
 - Creating custom web links for Discord webhooks
 - Having settings to edit how the messages are formatted
+- Logging and posting your own scheduled posts
 
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page or in our Discord Server.
