@@ -76,8 +76,12 @@ async def formatter(user, prev_time, social_media, channels, settings):
         return {"channels_exist": True, "api_success": True, "api_type": posts_req.get("API"), "data": posts, "time_elapsed": posts_req.get("Time elapsed")}
     print(posts)
     for p in posts:
+        if p.get("post_text") is not None:
+            post_text = p.get("post_text")
+        else:
+            post_text = ""
         embed = discord.Embed(
-            description=p["post_text"], color=SOCIALS_DATA[social_media]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
+            description=post_text, color=SOCIALS_DATA[social_media]["color"], timestamp=datetime.utcfromtimestamp(p["post_timestamp"]).replace(tzinfo=timezone.utc))
         embed.set_author(
             name=user, url=p["profile_URL"], icon_url=p["profile_pic_URL"])
         embed.set_footer(
@@ -258,6 +262,102 @@ async def list(ctx):
 
 @ list.error
 async def list_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!list`")
+        return
+    await ctx.send(repr(error))
+
+
+@ bot.command()
+async def listInstagram(ctx):
+    if not await has_perms(ctx):
+        return
+    social_media = "instagram"
+    accounts = social_database.get(ctx.guild.id).get(social_media)
+    if accounts is None:
+        accounts = []
+    embed = discord.Embed(
+        title="Accounts", description='\n'.join(accounts), color=SOCIALS_DATA[social_media]["color"])
+    embed.set_footer(text=social_media.capitalize(),
+                     icon_url=SOCIALS_DATA[social_media]["icon"])
+    await ctx.send(embed=embed)
+    await add_reaction(ctx)
+
+
+@ list.error
+async def listInstagram_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!list`")
+        return
+    await ctx.send(repr(error))
+
+
+@ bot.command()
+async def listTwitter(ctx):
+    if not await has_perms(ctx):
+        return
+    social_media = "twitter"
+    accounts = social_database.get(ctx.guild.id).get(social_media)
+    if accounts is None:
+        accounts = []
+    embed = discord.Embed(
+        title="Accounts", description='\n'.join(accounts), color=SOCIALS_DATA[social_media]["color"])
+    embed.set_footer(text=social_media.capitalize(),
+                     icon_url=SOCIALS_DATA[social_media]["icon"])
+    await ctx.send(embed=embed)
+    await add_reaction(ctx)
+
+
+@ list.error
+async def listTwitter_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!list`")
+        return
+    await ctx.send(repr(error))
+
+
+@ bot.command()
+async def listYoutube(ctx):
+    if not await has_perms(ctx):
+        return
+    social_media = "youtube"
+    accounts = social_database.get(ctx.guild.id).get(social_media)
+    if accounts is None:
+        accounts = []
+    embed = discord.Embed(
+        title="Accounts", description='\n'.join(accounts), color=SOCIALS_DATA[social_media]["color"])
+    embed.set_footer(text=social_media.capitalize(),
+                     icon_url=SOCIALS_DATA[social_media]["icon"])
+    await ctx.send(embed=embed)
+    await add_reaction(ctx)
+
+
+@ list.error
+async def listYoutube_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
+        await ctx.send("Incorrect usage of command: `s!list`")
+        return
+    await ctx.send(repr(error))
+
+
+@ bot.command()
+async def listReddit(ctx):
+    if not await has_perms(ctx):
+        return
+    social_media = "instagram"
+    accounts = social_database.get(ctx.guild.id).get(social_media)
+    if accounts is None:
+        accounts = []
+    embed = discord.Embed(
+        title="Accounts", description='\n'.join(accounts), color=SOCIALS_DATA[social_media]["color"])
+    embed.set_footer(text=social_media.capitalize(),
+                     icon_url=SOCIALS_DATA[social_media]["icon"])
+    await ctx.send(embed=embed)
+    await add_reaction(ctx)
+
+
+@ list.error
+async def listReddit_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.ArgumentParsingError):
         await ctx.send("Incorrect usage of command: `s!list`")
         return

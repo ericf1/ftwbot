@@ -1,3 +1,5 @@
 Flask==2.1.2
 tweepy==4.6.0
-requests==2.27.1
+aiohttp==3.7.4.post0
+google-api-python-client==2.52.0
+APScheduler==3.9.1
