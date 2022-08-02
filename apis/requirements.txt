@@ -3,3 +3,5 @@ tweepy==4.6.0
 aiohttp==3.8.1
 google-api-python-client==2.52.0
 APScheduler==3.9.1
+python-dotenv==0.20.0
+python-dateutil==2.8.2
