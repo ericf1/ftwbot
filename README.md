@@ -1,19 +1,20 @@
 # Announcements
 
-Join for our support server for updates about the bot! https://discord.gg/Wu8wYvrSx4
+Join for our support server for updates about the bot! [Invite](https://discord.gg/Wu8wYvrSx4)
 
 # FTWBot
 
 <!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=200rem height=200rem> -->
 <div display="flex" flex-direction="column">
-  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftw%20logo.png" width=250rem height=250rem>
-  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwbot2.png" width=250rem height=250rem>
-  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwlogo3.png" width=250rem height=250rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftw%20logo.png" width=210rem height=210rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwbot2.png" width=210rem height=210rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwlogo3.png" width=210rem height=210rem>
+  <img src="https://github.com/ericf1/ftwbot/blob/main/pictures/ftwbot4.png" width=210rem height=210rem>
 </div>
 
 A Discord bot that continuously updates and posts Instagram and Twitter posts from designated accounts. 
 
-We are currently supporting over 250 servers!
+We are currently supporting over 310 servers!
 
 Visit our [Top.gg](https://top.gg/bot/952690377104719964) page!
 
@@ -27,6 +28,9 @@ If the first link is full:
 
 If the second link is full:
 [Third Link](https://discord.com/api/oauth2/authorize?client_id=989295540938362890&permissions=277025474624&scope=bot)
+
+If the third link is full:
+[Fourth Link](https://discord.com/api/oauth2/authorize?client_id=995839397150863360&permissions=277025474624&scope=bot)
 
 Features
 ---
@@ -62,6 +66,7 @@ Future
 - Implementing Reddit and YouTube APIs
 - Creating custom web links for Discord webhooks
 - Having settings to edit how the messages are formatted
+- Logging and posting your own scheduled posts
 
 
 Suggestions are appreciated and can be posted to the [Discussions](https://github.com/ericf1/ftwbot/discussions) page or in our Discord Server.
