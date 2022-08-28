@@ -2,7 +2,7 @@
 
 Join for our support server for updates about the bot! [Invite](https://discord.gg/Wu8wYvrSx4)
 
-As you may have noticed, the bot is currently down and I am working as much during my free time to be able to solve the current issue with my Instagram integration. Thank you so much for your patience.
+As you may have noticed, the bot is currently down, and I am working as much during my free time to solve the current issue with my Instagram integration. Thank you so much for your patience.
 
 # FTWBot
 
