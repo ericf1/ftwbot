@@ -2,6 +2,8 @@
 
 Join for our support server for updates about the bot! [Invite](https://discord.gg/Wu8wYvrSx4)
 
+As you may have noticed, the bot is currently down and I am working as much during my free time to be able to solve the current issue with my Instagram integration. Thank you so much for your patience.
+
 # FTWBot
 
 <!-- <img src="https://user-images.githubusercontent.com/89803837/160317016-a68164d4-a6fa-4fc4-8957-db3093f65c73.png" alt="Basket with social medias inside" width=200rem height=200rem> -->
