@@ -136,4 +136,4 @@ Made For
 
 Developers
 ---
-Eric Fang, Wilson Wuchen, Edison Tran, Trinnity Ye (Marketing), Ella Tang (Marketing)
+Eric Fang
