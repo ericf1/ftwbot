@@ -30,6 +30,7 @@ class InstagramAPI:
             userID = self.cl.user_id_from_username(username)
             info = self.cl.user_info(userID)
 
+            # only looks at most recent 2 posts, work around pinned posts leading the list
             image_posts_data = self.cl.user_medias(userID, 2)
             # video_posts_data = user_data["edge_felix_video_timeline"]["edges"]
 
