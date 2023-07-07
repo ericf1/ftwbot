@@ -8,9 +8,6 @@ load_dotenv()
 
 
 class InstagramAPI:
-    BASE_URL = "https://www.instagram.com/"
-    STORIES_UA = "Instagram 123.0.0.21.114 (iPhone; CPU iPhone OS 11_4 like Mac OS X; en_US; en-US; scale=2.00; 750x1334) AppleWebKit/605.1.15"
-    LOGIN_URL = BASE_URL + "accounts/login/ajax/"
     USERNAME = os.getenv("INSTAGRAM_USERNAME")
     PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
 
@@ -55,7 +52,7 @@ class InstagramAPI:
                                 if post_data.media_type == 2
                                 else False
                             )
-                            data["post_media_URL"] = post_data.thumbnail.url
+                            data["post_media_URL"] = post_data.thumbnail_url
 
                             if post_data.caption_text:
                                 data["post_text"] = post_data.caption_text
@@ -87,13 +84,8 @@ class InstagramAPI:
     async def check_instagram_user(self, username: str) -> dict:
         await asyncio.sleep(1)
         try:
-            if not (await self.cl.user_id_from_username(username)):
-                # return {
-                #     "data": False,
-                #     "success": True,
-                #     "API": "Instagram",
-                #     "username": username,
-                # }
+            if self.cl.user_id_from_username(username):
+                # if username is invalid, it will throw an exception
                 return {
                     "data": True,
                     "success": True,
@@ -125,5 +117,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    for _ in range(10):
-        asyncio.run(main())
+    asyncio.run(main())
