@@ -39,12 +39,25 @@ def hello():
     return "hello"
 
 
-@app.route("/instagram", methods=["GET"])
-def instagram():
+@app.route("/instagram-post", methods=["GET"])
+def instagram_post():
     start = time.perf_counter()
     username = request.args.get("username")
     prev_time = int(request.args.get("prev_time"))
     result = asyncify(instagram_api.get_latest_instagram_post, username, prev_time)
+    finish = time.perf_counter()
+    result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
+    if not result.get("success"):
+        return jsonify(result), 500
+    return jsonify(result), 202
+
+
+@app.route("/instagram-story", methods=["GET"])
+def instagram_story():
+    start = time.perf_counter()
+    username = request.args.get("username")
+    prev_time = int(request.args.get("prev_time"))
+    result = asyncify(instagram_api.get_latest_instagram_story, username, prev_time)
     finish = time.perf_counter()
     result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
     if not result.get("success"):
