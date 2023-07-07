@@ -47,6 +47,7 @@ class InstagramAPI:
                             data[
                                 "post_URL"
                             ] = f"https://www.instagram.com/p/{post_data.code}/"
+
                             compared_time = data[
                                 "post_timestamp"
                             ] = post_data.taken_at.timestamp()
@@ -68,6 +69,66 @@ class InstagramAPI:
 
             get_post_data(image_posts_data)
             # get_post_data(video_posts_data)
+
+        except Exception as e:
+            print(repr(e))
+            return {
+                "data": repr(e),
+                "success": False,
+                "API": "Instagram",
+                "username": username,
+                "prev_time": prev_fetch_time,
+            }
+        return {
+            "data": all_data,
+            "success": True,
+            "API": "Instagram",
+            "username": username,
+            "prev_time": prev_fetch_time,
+        }
+
+    async def get_latest_instagram_story(
+        self, username: str, prev_fetch_time: int
+    ) -> dict():
+        profile_data = dict()
+        all_data = []
+
+        try:
+            # await asyncio.sleep(1)
+            userID = self.cl.user_id_from_username(username)
+            info = self.cl.user_info(userID)
+
+            stories_data = self.cl.user_stories(userID)
+
+            profile_data["profile_URL"] = f"https://www.instagram.com/{username}"
+            profile_data["profile_pic_URL"] = info.profile_pic_url
+
+            def get_stories_data(stories_data):
+                for story_data in stories_data:
+                    if int(story_data.taken_at.timestamp()) > prev_fetch_time:
+                        try:
+                            all_data.clear()
+                            data = dict()
+
+                            data["story_id"] = story_data.id
+                            data[
+                                "story_URL"
+                            ] = f"https://www.instagram.com/stories/{username}/{story_data.pk}/"
+                            data["post_timestamp"] = story_data.taken_at.timestamp()
+
+                            data["post_is_video"] = (
+                                # media_type = 2 refers to any video, IGTV, or reel
+                                True
+                                if story_data.media_type == 2
+                                else False
+                            )
+                            data["post_media_URL"] = story_data.thumbnail_url
+
+                            all_data.append({**profile_data, **data})
+                        except Exception as e:
+                            print(repr(e), story_data)
+
+            get_stories_data(stories_data)
 
         except Exception as e:
             print(repr(e))
