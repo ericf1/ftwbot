@@ -27,24 +27,29 @@ class InstagramAPI:
             userID = self.cl.user_id_from_username(username)
             info = self.cl.user_info(userID)
 
-            # only looks at most recent 2 posts, work around pinned posts leading the list
-            image_posts_data = self.cl.user_medias(userID, 2)
+            # instagram can have up to 3 pinned posts
+            image_posts_data = self.cl.user_medias(userID, 4)
             # video_posts_data = user_data["edge_felix_video_timeline"]["edges"]
 
             profile_data["profile_URL"] = f"https://www.instagram.com/{username}"
             profile_data["profile_pic_URL"] = info.profile_pic_url
 
             def get_post_data(posts_data):
+                compared_time = prev_fetch_time
+
                 for post_data in posts_data:
-                    if int(post_data.taken_at.timestamp()) > prev_fetch_time:
+                    if int(post_data.taken_at.timestamp()) > compared_time:
                         try:
+                            all_data.clear()
                             data = dict()
 
                             data["post_id"] = post_data.id
                             data[
                                 "post_URL"
                             ] = f"https://www.instagram.com/p/{post_data.code}/"
-                            data["post_timestamp"] = post_data.taken_at.timestamp()
+                            compared_time = data[
+                                "post_timestamp"
+                            ] = post_data.taken_at.timestamp()
 
                             data["post_is_video"] = (
                                 # media_type = 2 refers to any video, IGTV, or reel
