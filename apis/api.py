@@ -1,4 +1,4 @@
-# from redditapi import check_subreddit, get_latest_subreddit_posts
+from redditapi import check_subreddit, get_latest_subreddit_posts
 from instagramapi import InstagramAPI
 
 # from twitterapi import get_latest_twitter_post, check_twitter_user
@@ -91,17 +91,17 @@ def instagram_story():
 #     return jsonify(result), 202
 
 
-# @app.route("/reddit", methods=["GET"])
-# def reddit():
-#     start = time.perf_counter()
-#     username = request.args.get("username")
-#     prev_time = int(request.args.get("prev_time"))
-#     result = asyncify(get_latest_subreddit_posts, username, prev_time)
-#     finish = time.perf_counter()
-#     result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
-#     if not result.get("success"):
-#         return jsonify(result), 500
-#     return jsonify(result), 202
+@app.route("/reddit", methods=["GET"])
+def reddit():
+    start = time.perf_counter()
+    username = request.args.get("username")
+    prev_time = int(request.args.get("prev_time"))
+    result = asyncify(get_latest_subreddit_posts, username, prev_time)
+    finish = time.perf_counter()
+    result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
+    if not result.get("success"):
+        return jsonify(result), 500
+    return jsonify(result), 202
 
 
 # @app.route("/twitter-user", methods=["GET"])
