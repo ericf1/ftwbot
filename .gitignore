@@ -127,3 +127,4 @@ venv.bak/
 database.json
 failed.txt
 new_database.json
+settings.json
