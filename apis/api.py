@@ -1,7 +1,8 @@
 from redditapi import check_subreddit, get_latest_subreddit_posts
 from instagramapi import InstagramAPI
 
-# from twitterapi import get_latest_twitter_post, check_twitter_user
+from twitterapi import get_latest_twitter_post, check_twitter_user
+
 # from youtubeapi import get_latest_youtube_post, check_youtube_user
 from flask import Flask, jsonify, request
 import asyncio
@@ -65,17 +66,17 @@ def instagram_story():
     return jsonify(result), 202
 
 
-# @app.route("/twitter", methods=["GET"])
-# def twitter():
-#     start = time.perf_counter()
-#     username = request.args.get("username")
-#     prev_time = int(request.args.get("prev_time"))
-#     result = asyncify(get_latest_twitter_post, username, prev_time)
-#     finish = time.perf_counter()
-#     result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
-#     if not result.get("success"):
-#         return jsonify(result), 500
-#     return jsonify(result), 202
+@app.route("/twitter", methods=["GET"])
+def twitter():
+    start = time.perf_counter()
+    username = request.args.get("username")
+    prev_time = int(request.args.get("prev_time"))
+    result = asyncify(get_latest_twitter_post, username, prev_time)
+    finish = time.perf_counter()
+    result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
+    if not result.get("success"):
+        return jsonify(result), 500
+    return jsonify(result), 202
 
 
 # @app.route("/youtube", methods=["GET"])
@@ -104,16 +105,16 @@ def reddit():
     return jsonify(result), 202
 
 
-# @app.route("/twitter-user", methods=["GET"])
-# def twitter_user():
-#     start = time.perf_counter()
-#     username = request.args.get("username")
-#     result = asyncify(check_twitter_user, username)
-#     finish = time.perf_counter()
-#     result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
-#     if not result.get("success"):
-#         return jsonify(result), 500
-#     return jsonify(result), 202
+@app.route("/twitter-user", methods=["GET"])
+def twitter_user():
+    start = time.perf_counter()
+    username = request.args.get("username")
+    result = asyncify(check_twitter_user, username)
+    finish = time.perf_counter()
+    result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
+    if not result.get("success"):
+        return jsonify(result), 500
+    return jsonify(result), 202
 
 
 @app.route("/instagram-user", methods=["GET"])
@@ -140,16 +141,16 @@ def instagram_user():
 #     return jsonify(result), 202
 
 
-# @app.route("/reddit-user", methods=["GET"])
-# def subreddit():
-#     start = time.perf_counter()
-#     username = request.args.get("username")
-#     result = asyncify(check_subreddit, username)
-#     finish = time.perf_counter()
-#     result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
-#     if not result.get("success"):
-#         return jsonify(result), 500
-#     return jsonify(result), 202
+@app.route("/reddit-user", methods=["GET"])
+def subreddit():
+    start = time.perf_counter()
+    username = request.args.get("username")
+    result = asyncify(check_subreddit, username)
+    finish = time.perf_counter()
+    result.update({"Time elapsed": f"{round(finish-start, 2)} seconds(s)"})
+    if not result.get("success"):
+        return jsonify(result), 500
+    return jsonify(result), 202
 
 
 if __name__ == "__main__":
