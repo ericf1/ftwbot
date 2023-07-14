@@ -5,3 +5,4 @@ requests==2.27.1
 discord.py==1.7.3
 tweepy==4.6.0
 aiohttp==3.8.1
+instagrapi==1.17.10
