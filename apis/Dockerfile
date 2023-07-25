@@ -1,6 +1,6 @@
-FROM python:alpine3.10
+FROM python:3
 
-WORKDIR /app
+WORKDIR /ftwbot
 COPY . .
 
 RUN pip install -r requirements.txt
@@ -9,3 +9,4 @@ ENTRYPOINT [ "python" ]
 
 CMD [ "api.py" ]
 
+EXPOSE 5000

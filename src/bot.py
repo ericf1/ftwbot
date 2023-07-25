@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from data import SOCIALS_DATA, SUPPORTED_SETTINGS_DATA, DEFAULT_SETTINGS_DATA
 from dotenv import load_dotenv
 from database import ChannelsDatabase, SocialDatabase, TimeDatabase, SettingsDatabase
-
+import random
 
 # Necessary functional commands
 load_dotenv()
@@ -147,9 +147,11 @@ async def addChannel_error(ctx, error):
 async def removeChannel(ctx, channel: discord.TextChannel = None):
     if not await has_perms(ctx):
         return
-
-    channels_database.remove(ctx.guild.id, channel.id)
-
+    
+    if channel:
+        channels_database.remove(ctx.guild.id, channel.id)
+    else:
+        channels_database.remove(ctx.guild.id, ctx.channel.id)
     await add_reaction(ctx)
 
 
@@ -282,7 +284,6 @@ async def listInstagram(ctx):
                      icon_url=SOCIALS_DATA[social_media]["icon"])
     await ctx.send(embed=embed)
     await add_reaction(ctx)
-
 
 @ list.error
 async def listInstagram_error(ctx, error):
@@ -464,8 +465,12 @@ async def setSettings_error(ctx, error):
         return
     await ctx.send(repr(error))
 
+@ bot.command()
+async def checkTime(ctx):
+    await ctx.send(main_loop.next_iteration.timezone.utc())
+    await add_reaction(ctx)
 
-@ tasks.loop(minutes=35)  # repeats every n minutes
+@ tasks.loop(minutes=random.randint(30,40))  # repeats every n minutes, random for harder bot detection
 async def main_loop():
     failed = []
     start = time.perf_counter()
