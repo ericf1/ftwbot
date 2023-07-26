@@ -60,13 +60,13 @@ async def request_posts(url):
 # formatter function that sends the correct social media post
 
 
-async def formatter(user, prev_time, social_media, channels, settings):
+async def formatter(user, prev_time, subscription, channels, settings, social_media):
     # get all the avaliable channels
     all_channels = channels
 
     platform = social_media.capitalize()
 
-    url = f"{SERVER_API}/{social_media}?username={user}&prev_time={prev_time}"
+    url = f"{SERVER_API}/{subscription}?username={user}&prev_time={prev_time}"
     posts_req = await request_posts(url)
     if posts_req.get("success") is False:
         return {"channels_exist": True, "api_success": False, "api_type": posts_req.get("API"), "data": posts_req.get('data'), "time_elapsed": posts_req.get("Time elapsed")}
@@ -485,26 +485,28 @@ async def main_loop():
             socials = social_database.get(server_id)
             settings = settings_database.get(server_id)
             for social_media in SOCIALS_DATA.keys():
-                if socials.get(social_media) is None:
-                    continue
-                for user in socials[social_media]:
-                    params = [user, prev_time,
-                              social_media, all_channels, settings, server_id]
-                    print(
-                        f"Server: {server_id} Channels: {channels} Settings: {settings}\nUsername: {user} on {social_media}")
-                    try:
-                        result = await formatter(params[0], params[1], params[2], params[3], params[4])
-                        if result.get("api_success") is False:
-                            print("API FAILED!!!\n" + str(result) + "\n")
+                for subscription in SOCIALS_DATA[social_media]["names"]:
+                    print(subscription)
+                    if socials.get(social_media) is None:
+                        continue
+                    for user in socials[social_media]:
+                        params = [user, prev_time,
+                                subscription, all_channels, settings, server_id, social_media]
+                        print(
+                            f"Server: {server_id} Channels: {channels} Settings: {settings}\nUsername: {user} on {subscription}")
+                        try:
+                            result = await formatter(params[0], params[1], params[2], params[3], params[4], params[6])
+                            if result.get("api_success") is False:
+                                print("API FAILED!!!\n" + str(result) + "\n")
+                                failed.append(params)
+                                continue
+                        except Exception as e:
+                            result = {"channels_exist": False, "api_success": False,
+                                    "api_type": "ERROR", "data": repr(e), "time_elapsed": "ERROR"}
+                            print("API FAILED!!!" + str(result) + "\n")
                             failed.append(params)
                             continue
-                    except Exception as e:
-                        result = {"channels_exist": False, "api_success": False,
-                                  "api_type": "ERROR", "data": repr(e), "time_elapsed": "ERROR"}
-                        print("API FAILED!!!" + str(result) + "\n")
-                        failed.append(params)
-                        continue
-                    print("Result: " + str(result) + "\n")
+                        print("Result: " + str(result) + "\n")
             time_database.add(server_id, int(time.time()))
     finish = time.perf_counter()
     failed_meta = f"\n\n\nThis loop took: {round(finish - start, 2)} seconds which is around {round(finish - start, 2)//60} minutes\n\n\n"
