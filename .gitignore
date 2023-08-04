@@ -109,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+apis/settings.json
 
 # Spyder project settings
 .spyderproject
@@ -127,3 +128,4 @@ venv.bak/
 database.json
 failed.txt
 new_database.json
+settings.json
